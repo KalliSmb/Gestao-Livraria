@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 
 namespace LP1_Livraria
 {
@@ -77,7 +78,7 @@ namespace LP1_Livraria
 
         static bool VerificarLogin(string utilizador, string password)
         {
-            string caminhoArquivo = "DadosUtilizadores.txt";
+            string caminhoArquivo = "..\\..\\DadosUtilizadores.txt";
 
             try
             {
@@ -91,9 +92,18 @@ namespace LP1_Livraria
                 foreach (string linha in linhas)
                 {
                     string[] dados = linha.Split(',');
-                    if (dados.Length == 2 && dados[0] == utilizador && dados[1] == password)
+                    string[] campos = new string[3];
+
+                    if (dados.Length == campos.Length)
                     {
-                        return true;
+                        Array.Copy(dados, campos, campos.Length);
+
+                        if (campos[0] == utilizador && campos[1] == password) 
+                        {
+                            string cargo = campos[2];
+                            Console.WriteLine($"Bem vindo, {utilizador}! Cargo: {cargo}");
+                            return true;
+                        }
                     }
                 }
 
