@@ -1,15 +1,16 @@
 ﻿using System;
+using System.IO;
 
 namespace LP1_Livraria
 {
     public class Gerente
     {
-        public static int MenuGerente()
+        public static void MenuGerente()
         {
-            Console.Clear();
-
             while (true)
             {
+                Console.Clear();
+
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine("|============================================|");
                 Console.WriteLine("|                Menu Gerente                |");
@@ -22,35 +23,66 @@ namespace LP1_Livraria
 
                 Console.Write(" -> ");
 
-                try 
+                try
                 {
                     int escolha = int.Parse(Console.ReadLine());
 
-                    if (escolha == 0) 
+                    switch (escolha)
                     {
-                        // volta para o menu principal
-                    }
+                        case 0:
+                            Console.Clear();
+                            return; // sai do método
 
-                    if (escolha == 1)
-                    {
-                        // vai para o menu de criação de funcionário
-                    }
+                        case 1:
+                            CriarFuncionario();
+                            break;
 
-                    if (escolha == 2)
-                    {
-                        // vai para o menu de eliminação de funcionário
-                    }
+                        case 2:
+                            // elimina funcionário
+                            break;
 
-                    if (escolha == 3)
-                    {
-                        // vai para o menu de venda (lista de livros)
+                        case 3:
+                            // vai para o menu de venda (lista dos livros)
+                            break;
+
+                        default:
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Erro: Escolha inválida.");
+                            break;
                     }
                 }
-                catch 
+                catch (Exception ex)
                 {
-
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Erro: {ex.Message}");
+                    Console.ReadKey();
+                    Console.Clear();
                 }
             }
+        }
+
+        public static void CriarFuncionario() 
+        {
+            Console.Clear();
+            Console.WriteLine("Criar novo funcionário:");
+
+            Console.Write("Nome: ");
+            string utilizador = Console.ReadLine();
+
+            Console.Write("Password: ");
+            string password = Console.ReadLine();
+
+            Console.Write("Cargo: ");
+            string cargo = Console.ReadLine();
+
+            string novaLinha = $"{utilizador},{password},{cargo}";
+
+            string caminhoFicheiro = "..\\..\\DadosUtilizadores.txt";
+            File.AppendAllText(caminhoFicheiro, Environment.NewLine + novaLinha);
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("\nNovo funcionário criado com sucesso!");
+            Console.ReadLine();
         }
     }
 }

@@ -23,26 +23,34 @@ namespace LP1_Livraria
                     string[] dados = linha.Split(',');
                     string[] campos = new string[3];
 
-                    if (dados.Length == dados.Length)
+                    if (dados.Length == campos.Length)
                     {
                         Array.Copy(dados, campos, campos.Length);
 
                         if (campos[0] == utilizador && campos[1] == password)
                         {
-                            string cargo = campos[2];
-
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine("Login bem sucedido!");
+                            Console.ForegroundColor = ConsoleColor.Green; 
+                            Console.WriteLine("Login bem sucedido!, Aperte ENTER para prosseguir!");
                             Console.ReadKey();
-
-                            Gerente.MenuGerente();
+                           
+                            if (campos[2] == "Gerente") 
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                Console.ForegroundColor = ConsoleColor.White;
+                                Console.WriteLine($"Cargo: {campos[2]}");
+                                Console.ReadKey();
+                                Program.MenuPrincipal();
+                            }
                         }
                     }
                 }
 
                 return false;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"Erro ao verificar dados de login: {ex.Message}");
