@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 
 namespace LP1_Livraria
 {
@@ -38,7 +39,7 @@ namespace LP1_Livraria
                             break;
 
                         case 2:
-                            // elimina funcionário
+                            EliminarFuncionario();
                             break;
 
                         case 3:
@@ -61,7 +62,7 @@ namespace LP1_Livraria
             }
         }
 
-        public static void CriarFuncionario() 
+        public static void CriarFuncionario()
         {
             Console.Clear();
             Console.WriteLine("Criar novo funcionário:");
@@ -78,10 +79,50 @@ namespace LP1_Livraria
             string novaLinha = $"{utilizador},{password},{cargo}";
 
             string caminhoFicheiro = "..\\..\\DadosUtilizadores.txt";
-            File.AppendAllText(caminhoFicheiro, Environment.NewLine + novaLinha);
+            File.AppendAllText(caminhoFicheiro, novaLinha + Environment.NewLine);
 
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("\nNovo funcionário criado com sucesso!");
+            Console.ReadLine();
+        }
+
+        public static void EliminarFuncionario()
+        {
+            Console.Clear();
+            Console.WriteLine("Eliminar funcionário:");
+
+            Console.Write("Nome do funcionário a ser removido: ");
+            string utilizador = Console.ReadLine();
+
+            string caminhoFicheiro = "..\\..\\DadosUtilizadores.txt";
+            string[] linhas = File.ReadAllLines(caminhoFicheiro);
+
+            bool funcionarioEncontrado = false;
+
+            for (int i = 0; i < linhas.Length; i++)
+            {
+                string[] dados = linhas[i].Split(',');
+
+                if (dados.Length == 3 && dados[0] == utilizador)
+                {
+                    linhas[i] = null;
+                    funcionarioEncontrado = true;
+                    break;
+                }
+            }
+
+            if (funcionarioEncontrado)
+            {
+                File.WriteAllLines(caminhoFicheiro, linhas.Where(line => !string.IsNullOrEmpty(line)));
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("\nFuncionário removido com sucesso!");
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\nFuncionário não encontrado.");
+            }
+
             Console.ReadLine();
         }
     }
