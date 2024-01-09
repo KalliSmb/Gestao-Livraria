@@ -34,14 +34,8 @@ namespace LP1_Livraria
                             Console.ForegroundColor = ConsoleColor.Green;
                             Console.WriteLine("Login bem sucedido!");
                             Console.ReadKey();
-                            Console.Clear();
 
-                            Console.ForegroundColor = ConsoleColor.White;
-                            Console.WriteLine($"Bem vindo, {utilizador}! Cargo: {cargo}.");
-                            Console.ReadKey();
-                            Console.Clear();
-
-                            return true;
+                            Gerente.MenuGerente();
                         }
                     }
                 }

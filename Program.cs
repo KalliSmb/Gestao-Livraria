@@ -4,7 +4,7 @@ namespace LP1_Livraria
 {
     class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             while (true)
             {
@@ -38,7 +38,7 @@ namespace LP1_Livraria
 
                         if (Login.VerificarLogin(utilizador, password))
                         {
-                            
+                            // vai para o método VerificarLogin da classe Login
                         }
                         else
                         {
