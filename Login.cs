@@ -5,7 +5,15 @@ namespace LP1_Livraria
 {
     public class Login
     {
-        public static bool VerificarLogin(string utilizador, string password)
+        public enum Cargo
+        {
+            Desconhecido,
+            Gerente,
+            Caixa,
+            Repositor
+        }
+
+        public static Cargo VerificarLogin(string utilizador, string password)
         {
             string caminhoArquivo = "..\\..\\DadosUtilizadores.txt";
 
@@ -13,7 +21,7 @@ namespace LP1_Livraria
             {
                 if (!File.Exists(caminhoArquivo))
                 {
-                    return false;
+                    return Cargo.Desconhecido;
                 }
 
                 string[] linhas = File.ReadAllLines(caminhoArquivo);
@@ -21,34 +29,27 @@ namespace LP1_Livraria
                 foreach (string linha in linhas)
                 {
                     string[] dados = linha.Split(',');
-                    string[] campos = new string[3];
 
-                    if (dados.Length == campos.Length)
+                    if (dados.Length == 3 && dados[0] == utilizador && dados[1] == password)
                     {
-                        Array.Copy(dados, campos, campos.Length);
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("Login bem sucedido! Pressione ENTER para continuar.");
+                        Console.ReadKey();
 
-                        if (campos[0] == utilizador && campos[1] == password)
+                        if (Enum.TryParse(dados[2], out Cargo cargo))
                         {
-                            Console.ForegroundColor = ConsoleColor.Green; 
-                            Console.WriteLine("Login bem sucedido!, Aperte ENTER para prosseguir!");
-                            Console.ReadKey();
-                           
-                            if (campos[2] == "Gerente") 
-                            {
-                                return true;
-                            }
-                            else
-                            {
-                                Console.ForegroundColor = ConsoleColor.White;
-                                Console.WriteLine($"Cargo: {campos[2]}");
-                                Console.ReadKey();
-                                Program.MenuPrincipal();
-                            }
+                            return cargo;
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Erro: Cargo inválido encontrado.");
+                            return Cargo.Desconhecido;
                         }
                     }
                 }
 
-                return false;
+                return Cargo.Desconhecido;
             }
             catch (Exception ex)
             {
@@ -56,7 +57,7 @@ namespace LP1_Livraria
                 Console.WriteLine($"Erro ao verificar dados de login: {ex.Message}");
                 Console.ReadKey();
                 Console.Clear();
-                return false;
+                return Cargo.Desconhecido;
             }
         }
     }

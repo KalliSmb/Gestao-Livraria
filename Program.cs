@@ -6,6 +6,8 @@ namespace LP1_Livraria
     {
         private static bool sairPrograma = false;
 
+        public static Login.Cargo cargoAtual = Login.Cargo.Desconhecido;
+
         public static void Main(string[] args)
         {
             while (!sairPrograma)
@@ -73,16 +75,28 @@ namespace LP1_Livraria
             Console.Write("Password: ");
             string password = Console.ReadLine();
 
-            if (Login.VerificarLogin(utilizador, password))
+            cargoAtual = Login.VerificarLogin(utilizador, password);
+
+            switch (cargoAtual)
             {
-                Gerente.MenuGerente();
-            }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Login falhou. Utilizador ou password inválidos.");
-                Console.ReadKey();
-                Console.Clear();
+                case Login.Cargo.Gerente:
+                    Gerente.MenuGerente();
+                    break;
+
+                case Login.Cargo.Caixa:
+                    // Adicionar lógica para o Caixa
+                    break;
+
+                case Login.Cargo.Repositor:
+                    Repositor.MenuRepositor();
+                    break;
+
+                default:
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Login falhou. Utilizador ou password inválidos ou cargo desconhecido.");
+                    Console.ReadKey();
+                    Console.Clear();
+                    break;
             }
         }
 
@@ -92,6 +106,7 @@ namespace LP1_Livraria
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Logout bem sucedido!");
             Console.ReadKey();
+            cargoAtual = Login.Cargo.Desconhecido;
         }
     }
 }
