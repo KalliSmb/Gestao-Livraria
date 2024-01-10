@@ -46,6 +46,9 @@
     <Compile Include="Caixa.cs" />
     <Compile Include="Gerente.cs" />
     <Compile Include="Login.cs" />
+    <Compile Include="MenuLoginNovo.cs" />
+    <Compile Include="NovoMenuGerente.cs" />
+    <Compile Include="NovoMenuRepositor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositor.cs" />

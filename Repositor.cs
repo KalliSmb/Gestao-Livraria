@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using static System.Console;
 
 namespace LP1_Livraria
 {
@@ -7,43 +8,54 @@ namespace LP1_Livraria
     {
         public static void MenuRepositor()
         {
+            Title = "Repositor";
+            MenuRepositorMetodo();
+        }
+
+        public static void MenuRepositorMetodo()
+        {
             while (true)
             {
-                Console.Clear();
+                string prompt = @"
 
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine("|============================================|");
-                Console.WriteLine("|               Menu Repositor               |");
-                Console.WriteLine("|============================================|");
-                Console.WriteLine("| 0. Voltar para o menu principal            |");
-                Console.WriteLine("| 1. Registar novo livro                     |");
-                Console.WriteLine("| 2. Adicionar stock a um livro              |");
-                Console.WriteLine("| 3. Consultar stock                         |");
-                Console.WriteLine("|--------------------------------------------|\n");
+  _____                      _ _             
+ |  __ \                    (_) |            
+ | |__) |___ _ __   ___  ___ _| |_ ___  _ __ 
+ |  _  // _ \ '_ \ / _ \/ __| | __/ _ \| '__|
+ | | \ \  __/ |_) | (_) \__ \ | || (_) | |   
+ |_|  \_\___| .__/ \___/|___/_|\__\___/|_|   
+            | |                              
+            |_|                              
 
-                Console.Write(" -> ");
+
+Bem Vindo qual das opções deseja selecionar?";
+                ForegroundColor = ConsoleColor.White;
+                BackgroundColor = ConsoleColor.Black;
+
+                string[] options = { "Consultar Stock", "Adicionar Stock", "Registar novo Produto", "Voltar para o menu principal" };
+                NovoMenuRepositor mainMenu = new NovoMenuRepositor(prompt, options);
+                int SelectedRepositor = mainMenu.Run3();
 
                 try
                 {
-                    int escolha = int.Parse(Console.ReadLine());
 
-                    switch (escolha)
+                    switch (SelectedRepositor)
                     {
                         case 0:
-                            Console.Clear();
-                            return; // sai do método
-
-                        case 1:
-                            RegistarLivro();
+                            ConsultarStock();
                             break;
 
-                        case 2:
+                        case 1:
                             AdicionarStock();
                             break;
 
-                        case 3:
-                            ConsultarStock();
+                        case 2:
+                            RegistarLivro();
                             break;
+
+                        case 3:
+                            Console.Clear();
+                            return; // sai do método 
 
                         default:
                             Console.ForegroundColor = ConsoleColor.Red;

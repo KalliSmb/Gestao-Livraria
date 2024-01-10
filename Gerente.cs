@@ -1,50 +1,62 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using static System.Console;
 
 namespace LP1_Livraria
 {
     public class Gerente
     {
-        public static void MenuGerente()
+        public static void MenuGerenteNovo()
+        {
+            Title = "Menu Gerente";
+            MenuGerenteMetodo();
+
+        }
+
+        private static void MenuGerenteMetodo()
         {
             while (true)
             {
-                Console.Clear();
+                string prompt = @"
 
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine("|============================================|");
-                Console.WriteLine("|                Menu Gerente                |");
-                Console.WriteLine("|============================================|");
-                Console.WriteLine("| 0. Voltar para o menu principal            |");
-                Console.WriteLine("| 1. Criar novo funcionário                  |");
-                Console.WriteLine("| 2. Eliminar funcionário                    |");
-                Console.WriteLine("| 3. Biblioteca                              |");
-                Console.WriteLine("|--------------------------------------------|\n");
+   _____                     _       
+  / ____|                   | |      
+ | |  __  ___ _ __ ___ _ __ | |_ ___ 
+ | | |_ |/ _ \ '__/ _ \ '_ \| __/ _ \
+ | |__| |  __/ | |  __/ | | | ||  __/
+  \_____|\___|_|  \___|_| |_|\__\___|
+                                     
+                                     
 
-                Console.Write(" -> ");
+Bem Vindo qual das opções deseja selecionar?";
+                ForegroundColor = ConsoleColor.White;
+                BackgroundColor = ConsoleColor.Black;
+
+                string[] options = { "Criar novo funcionário", "Eliminar funcionário", "Biblioteca", "Voltar para o menu principal" };
+                NovoMenuGerente mainMenu = new NovoMenuGerente(prompt, options);
+                int SelectedGerente = mainMenu.Run();
 
                 try
                 {
-                    int escolha = int.Parse(Console.ReadLine());
 
-                    switch (escolha)
+                    switch (SelectedGerente)
                     {
                         case 0:
-                            Console.Clear();
-                            return; // sai do método
-
-                        case 1:
                             CriarFuncionario();
                             break;
 
-                        case 2:
+                        case 1:
                             EliminarFuncionario();
                             break;
 
-                        case 3:
+                        case 2:
                             // vai para o menu de venda (lista dos livros)
                             break;
+
+                        case 3:
+                            Console.Clear();
+                            return; // sai do método 
 
                         default:
                             Console.ForegroundColor = ConsoleColor.Red;

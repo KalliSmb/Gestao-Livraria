@@ -1,4 +1,5 @@
 ﻿using System;
+using static System.Console;
 
 namespace LP1_Livraria
 {
@@ -18,29 +19,43 @@ namespace LP1_Livraria
 
         public static void MenuPrincipal()
         {
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("|============================================|");
-            Console.WriteLine("|                  Livraria                  |");
-            Console.WriteLine("|============================================|");
-            Console.WriteLine("| 0 --> Sair                                 |");
-            Console.WriteLine("| 1 --> Login                                |");
-            Console.WriteLine("|                                            |");
-            Console.WriteLine("|--------------------------------------------|\n");
+            Title = "Login";
+            MetodoMenuLogin();
+        }
 
-            Console.Write(" -> ");
+        public static void MetodoMenuLogin()
+        {
+            string prompt = @"
+
+  _                 _       
+ | |               (_)      
+ | |     ___   __ _ _ _ __  
+ | |    / _ \ / _` | | '_ \ 
+ | |___| (_) | (_| | | | | |
+ |______\___/ \__, |_|_| |_|
+               __/ |        
+              |___/         
+
+
+Selecione uma das opcões!";
+            ForegroundColor = ConsoleColor.White;
+            BackgroundColor = ConsoleColor.Black;
+
+            string[] options = { "Login", "Sair" };
+            MenuLoginNovo mainMenu = new MenuLoginNovo(prompt, options);
+            int SelectedLogin = mainMenu.Run1();
 
             try
             {
-                int escolha = int.Parse(Console.ReadLine());
 
-                switch (escolha)
+                switch (SelectedLogin)
                 {
                     case 0:
-                        sairPrograma = true;
+                        FazerLogin();
                         break;
 
                     case 1:
-                        FazerLogin();
+                        sairPrograma = true;
                         break;
 
                     default:
@@ -80,7 +95,7 @@ namespace LP1_Livraria
             switch (cargoAtual)
             {
                 case Login.Cargo.Gerente:
-                    Gerente.MenuGerente();
+                    Gerente.MenuGerenteNovo();
                     break;
 
                 case Login.Cargo.Caixa:
