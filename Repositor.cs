@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using static System.Console;
 
 namespace LP1_Livraria
@@ -77,7 +78,7 @@ Bem Vindo qual das opções deseja selecionar?";
         {
             Console.Clear();
 
-            Console.WriteLine("Registar novo livro:");
+            Console.WriteLine("Registar novo livro:\n");
 
             Console.Write("Código do livro: ");
             if (!int.TryParse(Console.ReadLine(), out int codigo))
@@ -176,7 +177,7 @@ Bem Vindo qual das opções deseja selecionar?";
                         livroEncontrado = true;
 
                         // Verifica se há linhas suficientes após a linha do código
-                        if (i + 7 < linhas.Length) // Adiciona 7 para ir até a linha do estoque
+                        if (i + 7 < linhas.Length) // Adiciona 7 para ir até a linha do stock
                         {
                             Console.WriteLine($"\nStock atual do livro '{linhas[i + 1].Trim()}': {linhas[i + 7].Trim()}");
                             Console.Write("Quantidade a adicionar ao stock: ");
@@ -189,8 +190,16 @@ Bem Vindo qual das opções deseja selecionar?";
                                 // Atualiza a linha do stock no array
                                 linhas[i + 7] = novoStock.ToString();
 
-                                // Atualiza o arquivo com as novas linhas
-                                File.WriteAllLines(caminhoFicheiro, linhas);
+                                // Gera as linhas formatadas para o ficheiro
+                                string[] linhasFormatadas = linhas.Select((line, index) =>
+                                {
+                                    if (index == i + 7)
+                                        return novoStock.ToString();
+                                    return line;
+                                }).ToArray();
+
+                                // Atualiza o ficheiro com as novas linhas
+                                File.WriteAllText(caminhoFicheiro, string.Join("\n", linhasFormatadas));
 
                                 Console.ForegroundColor = ConsoleColor.Green;
                                 Console.WriteLine($"\nStock atualizado com sucesso. Novo stock: {novoStock}");
@@ -225,6 +234,7 @@ Bem Vindo qual das opções deseja selecionar?";
                 Console.Clear();
             }
         }
+
 
         public static void ConsultarStock()
         {
