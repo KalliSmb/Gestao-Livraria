@@ -99,7 +99,7 @@ Selecione uma das opcões!";
                     break;
 
                 case Login.Cargo.Caixa:
-                    // Adicionar lógica para o Caixa
+                    Caixa.MenuCaixa();
                     break;
 
                 case Login.Cargo.Repositor:
