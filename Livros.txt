@@ -1,3 +1,4 @@
+---------------------------------------------------
 1
 Harry Potter e o Prisioneiro de Azkaban
 J.K. Rowling
@@ -5,16 +6,16 @@ J.K. Rowling
 Ficcao
 39,9
 9,177
-51
+30
 ---------------------------------------------------
 2
-The Witcher: O Último Desejo
+The Witcher: O Ultimo Desejo
 Andrzej Sapkowski
 9788546902811
 Fantasia
 28,9
 6,647
-30
+10
 ---------------------------------------------------
 3
 Verity
