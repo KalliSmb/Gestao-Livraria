@@ -73,94 +73,79 @@ Bem Vindo qual das opções deseja selecionar ? ";
 
         public static void ListarLivrosAutor()
         {
-            Console.Clear();
-            Console.WriteLine("Listar livros pelo autor:\n");
-
-            string caminhoFicheiro = "..\\..\\Livros.txt";
-
             try
             {
-                string[] linhas = File.ReadAllLines(caminhoFicheiro);
+                Console.Clear();
+                Console.WriteLine("Introduza o nome do autor que deseja listar os livros:");
+                string autorInput = Console.ReadLine();
 
-                if (linhas.Length > 0)
+                string[] linhas = File.ReadAllLines("..\\..\\Livros.txt"); // Guarda no array todas as linhas do ficheiro
+
+                Console.Clear();
+                Console.WriteLine("Livros do autor " + autorInput + ":\n");
+
+                // Loop pelas linhas para procurar os livros do autor
+                for (int i = 0; i < linhas.Length; i += 9)
                 {
-                    Console.Write("Introduza o nome do autor: ");
-                    string autorInput = Console.ReadLine();
-
-                    Console.Clear();
-                    Console.WriteLine($"Livros do autor '{autorInput}':");
-
-                    for (int i = 0; i < linhas.Length; i += 8)
+                    // Verifica se há algum elemento não preenchido
+                    if (i + 8 < linhas.Length)
                     {
-                        string autor = linhas[i + 2].Trim();
-
-                        if (autor.Equals(autorInput, StringComparison.OrdinalIgnoreCase))
+                        // Verifica se o autor na linha atual corresponde ao autor introduzido
+                        if (linhas[i + 3].Equals(autorInput, StringComparison.OrdinalIgnoreCase))
                         {
-                            //Console.WriteLine($"Código: {linhas[i].Trim()}");
-                            Console.WriteLine($"Título: {linhas[i + 1].Trim()}");
+                            Console.WriteLine($"ID: {linhas[i + 1]}");
+                            Console.WriteLine($"Título: {linhas[i + 2]}\n");
                         }
                     }
                 }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Não há livros registados.");
-                }
-
-                Console.ReadLine();
             }
             catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"Erro ao listar livros pelo autor: {ex.Message}");
-                Console.ReadLine();
+                Console.WriteLine($"Erro ao listar livros por autor: {ex.Message}");
             }
+
+            Console.ReadKey();
+            Console.Clear();
         }
 
         public static void ListarLivrosGenero()
         {
-            Console.Clear();
-            Console.WriteLine("Listar livros pelo género:\n");
-
-            string caminhoFicheiro = "..\\..\\Livros.txt";
-
             try
             {
-                string[] linhas = File.ReadAllLines(caminhoFicheiro);
+                Console.Clear();
+                Console.WriteLine("Introduza o género de livro que deseja listar:");
+                string generoInput = Console.ReadLine();
 
-                if (linhas.Length > 0)
+                string[] linhas = File.ReadAllLines("..\\..\\Livros.txt"); // Guarda no array todas as linhas do ficheiro
+
+                Console.Clear();
+                Console.WriteLine("Livros do género " + generoInput + ":\n");
+
+                // Loop pelas linhas para procurar os livros do género
+                for (int i = 0; i < linhas.Length; i += 9)
                 {
-                    Console.Write("Introduza o género: ");
-                    string generoInput = Console.ReadLine();
-
-                    Console.Clear();
-                    Console.WriteLine($"Livros do género '{generoInput}':");
-
-                    for (int i = 0; i < linhas.Length; i += 8)
+                    // Verifica se há algum elemento não preenchido
+                    if (i + 8 < linhas.Length)
                     {
-                        string genero = linhas[i + 4].Trim();
-
-                        if (genero.Equals(generoInput, StringComparison.OrdinalIgnoreCase))
+                        // Verifica se o género na linha atual corresponde ao género introduzido
+                        if (linhas[i + 5].Equals(generoInput, StringComparison.OrdinalIgnoreCase))
                         {
-                            Console.WriteLine($"Código: {linhas[i].Trim()}");
-                            Console.WriteLine($"Título: {linhas[i + 1].Trim()}");
+                            Console.WriteLine($"ID: {linhas[i + 1]}");
+                            Console.WriteLine($"Título: {linhas[i + 2]}");
+                            Console.WriteLine($"Autor: {linhas[i + 3]}\n");
                         }
                     }
                 }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Não há livros registados.");
-                }
-
-                Console.ReadLine();
             }
             catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"Erro ao listar livros pelo género: {ex.Message}");
-                Console.ReadLine();
+                Console.WriteLine($"Erro ao listar livros por género: {ex.Message}");
             }
+
+            Console.ReadKey();
+            Console.Clear();
         }
     }
 }
