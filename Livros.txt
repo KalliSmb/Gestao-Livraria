@@ -35,3 +35,30 @@ Romance
 4,117
 6
 ---------------------------------------------------
+5
+Os Inovadores
+Walter Isaacson
+9789720048066
+Biografia
+15,2
+3,496
+2
+---------------------------------------------------
+6
+Introducao a Engenharia de Software
+Sergio Guerreiro
+9789727227952
+Tecnologia
+22,2
+5,106
+3
+---------------------------------------------------
+7
+O Que Faz o ChatGPT e Como Funciona
+Stephen Wolfram
+9789896618315
+Tecnologia
+13,9
+3,197
+11
+---------------------------------------------------
