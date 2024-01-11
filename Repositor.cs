@@ -33,7 +33,7 @@ Bem Vindo qual das opções deseja selecionar?";
                 ForegroundColor = ConsoleColor.White;
                 BackgroundColor = ConsoleColor.Black;
 
-                string[] options = { "Consultar Stock", "Adicionar Stock", "Registar novo Produto", "Voltar para o menu principal" };
+                string[] options = { "Consultar Stock", "Adicionar Stock", "Registar Livro", "Voltar para o menu principal" };
                 NovoMenuRepositor mainMenu = new NovoMenuRepositor(prompt, options);
                 int SelectedRepositor = mainMenu.Run3();
 
@@ -77,80 +77,92 @@ Bem Vindo qual das opções deseja selecionar?";
         public static void RegistarLivro()
         {
             Console.Clear();
-
-            Console.WriteLine("Registar novo livro:\n");
-
-            Console.Write("Código do livro: ");
-            if (!int.TryParse(Console.ReadLine(), out int codigo))
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Erro: O código do livro deve ser um número inteiro.");
-                Console.ReadKey();
-                return;
-            }
-
-            Console.Write("Nome do livro: ");
-            string nome = Console.ReadLine();
-
-            Console.Write("Autor: ");
-            string autor = Console.ReadLine();
-
-            Console.Write("ISBN: ");
-            if (!long.TryParse(Console.ReadLine(), out long isbn))
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Erro: O ISBN do livro deve ser um número longo.");
-                Console.ReadKey();
-                return;
-            }
-
-            Console.Write("Género: ");
-            string genero = Console.ReadLine();
-
-            Console.Write("Preço final: ");
-            if (!double.TryParse(Console.ReadLine(), out double precoFinal))
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Erro: O preço final do livro deve ser um número decimal.");
-                Console.ReadKey();
-                return;
-            }
-
-            // Calcula o preço do IVA (23% do valor final)
-            double precoIVA = precoFinal * 0.23;
-
-            Console.Write($"Preço do IVA (23%): {precoIVA}\n");
-
-            Console.Write("Quantidade em stock: ");
-            if (!int.TryParse(Console.ReadLine(), out int quantidadeStock))
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Erro: A quantidade em stock do livro deve ser um número inteiro.");
-                Console.ReadKey();
-                return;
-            }
-
-            string novaLinha = $"{codigo}\n{nome}\n{autor}\n{isbn}\n{genero}\n{precoFinal}\n{precoIVA}\n{quantidadeStock}\n---------------------------------------------------";
+            WriteLine("Registar livro:\n");
 
             string caminhoFicheiro = "..\\..\\Livros.txt";
 
             try
             {
-                // Adiciona uma linha em branco apenas se o arquivo não estiver vazio
-                if (new FileInfo(caminhoFicheiro).Length > 0)
+                string novaLinha;
+                bool continuarRegisto = true;
+
+                while (continuarRegisto)
                 {
-                    novaLinha = Environment.NewLine + novaLinha;
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.Write("Código do livro (insira o código 0 para terminar): ");
+                    if (!int.TryParse(Console.ReadLine(), out int codigo))
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Erro: O código do livro deve ser um número inteiro.");
+                        Console.ReadKey();
+                        return;
+                    }
+
+                    // Se o código for 0, termina o registo
+                    if (codigo == 0)
+                    {
+                        continuarRegisto = false;
+                        continue;
+                    }
+
+                    Console.Write("Nome do livro: ");
+                    string nome = Console.ReadLine();
+
+                    Console.Write("Autor: ");
+                    string autor = Console.ReadLine();
+
+                    Console.Write("ISBN: ");
+                    if (!long.TryParse(Console.ReadLine(), out long isbn))
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Erro: O ISBN do livro deve ser um número longo.");
+                        Console.ReadKey();
+                        return;
+                    }
+
+                    Console.Write("Género: ");
+                    string genero = Console.ReadLine();
+
+                    Console.Write("Preço final: ");
+                    if (!double.TryParse(Console.ReadLine(), out double precoFinal))
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Erro: O preço final do livro deve ser um número decimal.");
+                        Console.ReadKey();
+                        return;
+                    }
+
+                    double precoIVA = precoFinal * 0.23;
+                    Console.Write($"Preço do IVA (23%): {precoIVA}\n");
+
+                    Console.Write("Quantidade em stock: ");
+                    if (!int.TryParse(Console.ReadLine(), out int quantidadeStock))
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Erro: A quantidade em stock do livro deve ser um número inteiro.");
+                        Console.ReadKey();
+                        return;
+                    }
+
+                    novaLinha = $"{codigo}\n{nome}\n{autor}\n{isbn}\n{genero}\n{precoFinal}\n{precoIVA}\n{quantidadeStock}\n---------------------------------------------------";
+
+                    // Adiciona uma linha em branco apenas se o arquivo não estiver vazio
+                    if (new FileInfo(caminhoFicheiro).Length > 0)
+                    {
+                        novaLinha = Environment.NewLine + novaLinha;
+                    }
+
+                    File.AppendAllText(caminhoFicheiro, novaLinha);
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Novo livro registado com sucesso!\n");
                 }
 
-                File.AppendAllText(caminhoFicheiro, novaLinha);
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("\nNovo livro registado com sucesso!");
                 Console.ReadKey();
             }
             catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"Erro ao registar o livro: {ex.Message}");
+                Console.WriteLine($"Erro ao registar livros: {ex.Message}");
                 Console.ReadKey();
                 Console.Clear();
             }
@@ -234,7 +246,6 @@ Bem Vindo qual das opções deseja selecionar?";
                 Console.Clear();
             }
         }
-
 
         public static void ConsultarStock()
         {
