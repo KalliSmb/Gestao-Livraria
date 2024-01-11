@@ -2,35 +2,35 @@
 Harry Potter e o Prisioneiro de Azkaban
 J.K. Rowling
 9789722371124
-Fantasia/Ficcao
+Ficcao
 39,9
 9,177
-41
+51
 ---------------------------------------------------
 2
-aaaaaaaaaa
-aaaaaaaa
-1248148148
-aaaaaaaaaaa
-23
-5,29
-10
+The Witcher: O Último Desejo
+Andrzej Sapkowski
+9788546902811
+Fantasia
+28,9
+6,647
+30
 ---------------------------------------------------
 3
-bbbbbbbb
-bbbbbbbbb
-181247281478021
-bbbbbbbbb
-10
-2,3
-5
+Verity
+Colleen Hoover
+9789896687403
+Romance
+19,95
+4,5885
+7
 ---------------------------------------------------
 4
-asgfadfas
-fsafsaf
-1411424
-asdfasdas
-40
-9,2
-9
+Isto Acaba Aqui
+Colleen Hoover
+9781501110368
+Romance
+17,9
+4,117
+6
 ---------------------------------------------------
