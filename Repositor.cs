@@ -76,6 +76,8 @@ Bem Vindo qual das opções deseja selecionar?";
 
         public static void RegistarLivro()
         {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+
             Console.Clear();
             WriteLine("Registar livro:\n");
 
@@ -123,7 +125,7 @@ Bem Vindo qual das opções deseja selecionar?";
                     Console.Write("Género: ");
                     string genero = Console.ReadLine();
 
-                    Console.Write("Preço final: ");
+                    Console.Write("Preço final: € ");
                     if (!double.TryParse(Console.ReadLine(), out double precoFinal))
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
@@ -133,7 +135,8 @@ Bem Vindo qual das opções deseja selecionar?";
                     }
 
                     double precoIVA = precoFinal * 0.23;
-                    Console.Write($"Preço do IVA (23%): {precoIVA}\n");
+                    precoIVA = Math.Round(precoIVA, 2);
+                    Console.Write($"Preço do IVA (23%): € {precoIVA}\n");
 
                     Console.Write("Quantidade em stock: ");
                     if (!int.TryParse(Console.ReadLine(), out int quantidadeStock))
