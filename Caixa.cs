@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Net;
+using System.Text;
 using static System.Console;
 
 namespace LP1_Livraria
@@ -40,7 +43,7 @@ Bem Vindo qual das opções deseja selecionar ? ";
                     switch (SelectedCaixa)
                     {                     
                         case 0:
-                            //VenderLivro();
+                            VenderLivro();
                             break;
 
                         case 1:
@@ -68,6 +71,172 @@ Bem Vindo qual das opções deseja selecionar ? ";
                     Console.ReadKey();
                     Console.Clear();
                 }
+            }
+        }
+
+        public static void VenderLivro()
+        {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            Console.Clear();
+
+            // Ler todos os livros do arquivo
+            string caminhoFicheiro = "..\\..\\Livros.txt";
+            List<string> linhas = new List<string>(File.ReadAllLines(caminhoFicheiro));
+
+            // Verificar se há livros registrados
+            if (linhas.Count > 0)
+            {
+                try
+                {
+                    Console.WriteLine("Venda de Livros:\n");
+
+                    // Lista os livros disponíveis
+                    ListarLivros();
+
+                    // Solicita os códigos dos livros
+                    Console.WriteLine("\nIntroduza os códigos dos livros para vender (separados por espaços):");
+                    string[] codigosInput = Console.ReadLine().Split(' ');
+
+                    Console.Clear();
+
+                    double totalVenda = 0;
+                    double totalIVA = 0;
+                    int totalLivrosVendidos = 0; // Adicionando a variável para rastrear o total de livros vendidos
+
+                    // Lista de linhas modificadas
+                    List<string> linhasModificadas = new List<string>();
+
+                    // Loop pelos códigos introduzidos
+                    foreach (string codigoInput in codigosInput)
+                    {
+                        // Verifica se o código é um número válido
+                        if (int.TryParse(codigoInput, out int codigo))
+                        {
+                            // Busca o livro pelo código
+                            int indexLivro = -1;
+                            for (int i = 0; i < linhas.Count; i += 9)
+                            {
+                                if (int.Parse(linhas[i + 1].Trim()) == codigo)
+                                {
+                                    indexLivro = i;
+                                    break;
+                                }
+                            }
+
+                            // Se o livro foi encontrado
+                            if (indexLivro != -1)
+                            {
+                                // Exibe detalhes do livro e solicita a quantidade desejada
+                                Console.WriteLine($"\nDetalhes do Livro (Código: {codigo}):");
+                                Console.WriteLine($"Título: {linhas[indexLivro + 2].Trim()}");
+                                Console.WriteLine($"Autor: {linhas[indexLivro + 3].Trim()}");
+                                Console.WriteLine($"Preço: {linhas[indexLivro + 6].Trim()}€");
+                                Console.WriteLine($"Stock: {linhas[indexLivro + 8].Trim()}");
+                                Console.Write("Quantidade desejada: ");
+
+                                // Verifica se a quantidade é um número válido
+                                if (int.TryParse(Console.ReadLine(), out int quantidadeDesejada))
+                                {
+                                    int estoqueAtual = int.Parse(linhas[indexLivro + 8].Trim());
+
+                                    // Verifica se há estoque suficiente
+                                    if (quantidadeDesejada <= estoqueAtual)
+                                    {
+                                        double precoUnitario = double.Parse(linhas[indexLivro + 6].Trim());
+                                        double precoVenda = precoUnitario * quantidadeDesejada;
+                                        double iva = double.Parse(linhas[indexLivro + 7].Trim()) * quantidadeDesejada;
+
+                                        totalVenda += precoVenda;
+                                        totalIVA += iva;
+                                        totalLivrosVendidos += quantidadeDesejada; // Incrementa o total de livros vendidos
+
+                                        Console.WriteLine($"IVA (23%): {iva}€");
+                                        Console.WriteLine($"Subtotal: {precoVenda}€");
+
+                                        // Atualiza o estoque
+                                        linhas[indexLivro + 8] = (estoqueAtual - quantidadeDesejada).ToString();
+                                    }
+                                    else
+                                    {
+                                        Console.ForegroundColor = ConsoleColor.Red;
+                                        Console.WriteLine("Erro: Quantidade desejada superior ao estoque disponível.");
+                                    }
+                                }
+                                else
+                                {
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    Console.WriteLine("Erro: Quantidade inválida.");
+                                }
+                            }
+                            else
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine($"Erro: Livro com código {codigo} não encontrado.");
+                            }
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"Erro: Código inválido.");
+                        }
+                    }
+
+                    // Adiciona as linhas modificadas à lista
+                    linhasModificadas.AddRange(linhas);
+
+                    Console.WriteLine($"\nTotal de Livros Vendidos: {totalLivrosVendidos}");
+                    Console.WriteLine($"Total do IVA: {totalIVA}€");
+                    Console.WriteLine($"Total da Venda: {totalVenda}€");
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Venda realizada com sucesso!");
+
+                    // Salva as alterações no arquivo com quebra de linha adequada
+                    File.WriteAllText(caminhoFicheiro, string.Join(Environment.NewLine, linhasModificadas), Encoding.UTF8);
+                    Console.ReadKey();
+                }
+                catch (Exception ex)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Erro ao realizar a venda: {ex.Message}");
+                    Console.ReadKey();
+                    Console.Clear();
+                }
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Não há livros registrados para realizar a venda.");
+                Console.ReadKey();
+            }
+
+            Console.Clear();
+        }
+
+        public static void ListarLivros()
+        {
+            try
+            {
+                string[] linhas = File.ReadAllLines("..\\..\\Livros.txt");
+
+                Console.WriteLine("Lista de Livros Disponíveis:\n");
+
+                for (int i = 0; i < linhas.Length; i += 9)
+                {
+                    // Verifica se há informações suficientes para um livro
+                    if (i + 8 < linhas.Length && !string.IsNullOrWhiteSpace(linhas[i + 8]))
+                    {
+                        Console.WriteLine($"ID: {linhas[i + 1].Trim()}");
+                        Console.WriteLine($"Título: {linhas[i + 2].Trim()}");
+                        Console.WriteLine($"Autor: {linhas[i + 3].Trim()}");
+                        Console.WriteLine($"Preço: {linhas[i + 6].Trim()}€");
+                        Console.WriteLine($"Stock: {linhas[i + 8].Trim()}\n");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Erro ao listar livros: {ex.Message}");
             }
         }
 
