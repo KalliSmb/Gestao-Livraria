@@ -304,9 +304,23 @@ Bem Vindo qual das opções deseja selecionar?";
                     // Adiciona as linhas modificadas à lista
                     linhasModificadas.AddRange(linhas);
 
-                    Console.WriteLine($"\nTotal de Livros Vendidos: {totalLivrosVendidos}");
-                    Console.WriteLine($"Total do IVA: {totalIVA}€");
-                    Console.WriteLine($"Total da Venda: {totalVenda}€");
+                    // Aplica o desconto de 10% se a venda ultrapassar 50 euros
+                    if (totalVenda > 50)
+                    {
+                        double desconto = totalVenda * 0.10;
+                        totalVenda -= desconto;
+                        Console.WriteLine($"\nTotal de Livros Vendidos: {totalLivrosVendidos}");
+                        Console.WriteLine($"Total do IVA: {totalIVA}€");
+                        Console.WriteLine($"Desconto (10%): -{desconto}€");
+                        Console.WriteLine($"Total da Venda: {totalVenda}€");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"\nTotal de Livros Vendidos: {totalLivrosVendidos}");
+                        Console.WriteLine($"Total do IVA: {totalIVA}€");
+                        Console.WriteLine($"Total da Venda: {totalVenda}€");
+                    }
+
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("Venda realizada com sucesso!");
 
