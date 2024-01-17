@@ -7,7 +7,7 @@ using static System.Console;
 
 namespace LP1_Livraria
 {
-    class NovoMenuGerente  
+    class NovoMenuGerente
     {
         //Definir variáveis
         private int SelectedGerente;
@@ -16,7 +16,7 @@ namespace LP1_Livraria
 
         //Construtor
         public NovoMenuGerente(string prompt, string[] options)
-        { 
+        {
             //Valor do parámetro prompt
             Prompt = prompt;
 

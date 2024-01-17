@@ -40,7 +40,7 @@ Bem Vindo qual das opções deseja selecionar ? ";
                 try
                 {
                     switch (SelectedCaixa)
-                    {                     
+                    {
                         case 0:
                             VenderLivro();
                             break;
