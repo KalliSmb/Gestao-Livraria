@@ -2,3 +2,4 @@ kayro,123,Gerente
 zezokas,slb1904,Caixa
 jenilson,sub13,Repositor
 miguel,321,Gerente
+tiago,fcp1893,Gerente
