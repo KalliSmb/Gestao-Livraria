@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Security.Cryptography;
+using System.Text;
 using static System.Console;
 
 namespace LP1_Livraria
@@ -87,8 +89,24 @@ Selecione uma das opcões!";
             Console.Clear();
             Console.Write("Utilizador: ");
             string utilizador = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(utilizador))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Erro: Por favor, escreva o nome do utilizador.");
+                Console.ReadKey();
+                Console.Clear();
+                return; // Retorna, não permitindo a entrada da senha
+            }
             Console.Write("Password: ");
-            string password = Console.ReadLine();
+            string password = LerSenhaOculta();
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Erro: Por favor, escreva a password do utilizador.");
+                Console.ReadKey();
+                Console.Clear();
+                return; // Retorna, não permitindo a entrada da senha
+            }
 
             cargoAtual = Login.VerificarLogin(utilizador, password);
 
@@ -108,11 +126,39 @@ Selecione uma das opcões!";
 
                 default:
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Login falhou. Utilizador ou password inválidos ou cargo desconhecido.");
+                    Console.WriteLine("Login falhou. Utilizador ou password inválidos.");
                     Console.ReadKey();
                     Console.Clear();
                     break;
             }
+        }
+
+
+        private static string LerSenhaOculta()
+        {
+            string senha = "";
+            ConsoleKeyInfo key;
+
+            do
+            {
+                key = Console.ReadKey(true);
+
+                if (key.Key == ConsoleKey.Backspace && senha.Length > 0)
+                {
+                    // Se for a tecla Backspace e a senha não estiver vazia, apaga o último caractere
+                    senha = senha.Substring(0, senha.Length - 1);
+                    Console.Write("\b \b"); // Apaga o caractere da tela
+                }
+                else if (!char.IsControl(key.KeyChar))
+                {
+                    // Se não for uma tecla de controle, adiciona o caractere à senha e exibe um asterisco
+                    senha += key.KeyChar;
+                    Console.Write("*");
+                }
+            } while (key.Key != ConsoleKey.Enter);
+
+            Console.WriteLine(); // Pular para a próxima linha após a entrada da senha
+            return senha;
         }
 
         public static void Logout()
