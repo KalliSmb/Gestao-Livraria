@@ -48,6 +48,7 @@
     <Compile Include="Login.cs" />
     <Compile Include="MenuLoginNovo.cs" />
     <Compile Include="NovoMenuCaixa.cs" />
+    <Compile Include="NovoMenuEditarFuncionario.cs" />
     <Compile Include="NovoMenuGerente.cs" />
     <Compile Include="NovoMenuRepositor.cs" />
     <Compile Include="Program.cs" />

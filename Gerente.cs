@@ -239,39 +239,47 @@ Bem Vindo qual das opções deseja selecionar?";
             if (numeroLinha >= 1 && numeroLinha <= linhas.Count)
             {
                 string[] dados = linhas[numeroLinha - 1].Split(',');
+                string prompt = "O que deseja alterar? ";
+                ForegroundColor = ConsoleColor.White;
+                BackgroundColor = ConsoleColor.Black;
 
-                Console.WriteLine($"Funcionário atual: Nome={dados[0]}, Password={dados[1]}, Cargo={dados[2]}");
+                string[] options = { "Nome", "Password", "Cargo" }; // Guarda as opções do menu num array
+                NovoMenuEditarFuncionario mainMenu = new NovoMenuEditarFuncionario(prompt, options);
+                int SelectedFuncionario = mainMenu.Run5();
 
-                Console.WriteLine("\nO que deseja alterar?");
-                Console.WriteLine("1 - Nome");
-                Console.WriteLine("2 - Password");
-                Console.WriteLine("3 - Cargo");
-
-                if (int.TryParse(Console.ReadLine(), out int opcao))
+                try
                 {
-                    switch (opcao)
+
+                    switch (SelectedFuncionario)
                     {
-                        case 1:
+                        case 0:
+                            Console.Clear();
+                            Console.WriteLine($"Funcionário atual: Nome --> {dados[0]}");
                             Console.Write("Novo nome: ");
                             string novoNome = Console.ReadLine();
                             dados[0] = novoNome;
                             break;
 
-                        case 2:
+                        case 1:
+                            Console.Clear();
+                            Console.WriteLine($"Funcionário atual: Password --> {dados[1]}");
                             Console.Write("Nova password: ");
                             string novaPassword = Console.ReadLine();
                             dados[1] = novaPassword;
                             break;
 
-                        case 3:
+                        case 2:
+                            Console.Clear();
+                            Console.WriteLine($"Funcionário atual: Cargo --> {dados[2]}");
                             Console.Write("Novo cargo: ");
                             string novoCargo = Console.ReadLine();
                             dados[2] = novoCargo;
                             break;
 
                         default:
+                            Console.Clear();
                             Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("Opção inválida. Funcionário não modificado.");
+                            Console.WriteLine("Opção inválida. Funcionário não modificado!");
                             Console.ReadLine();
                             return;
                     }
@@ -286,12 +294,12 @@ Bem Vindo qual das opções deseja selecionar?";
                     File.WriteAllLines(caminhoFicheiro, linhas);
 
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("\nFuncionário modificado com sucesso!");
+                    Console.WriteLine("\nFuncionário modificado com sucesso!, Aperte ENTER para regressar ao menu!");
                 }
-                else
+                catch (Exception ex)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Opção inválida. Funcionário não modificado.");
+                    Console.WriteLine("Opção inválida. Funcionário não modificad!");
                 }
             }
             else
@@ -302,6 +310,8 @@ Bem Vindo qual das opções deseja selecionar?";
 
             Console.ReadLine();
         }
+
+
         public static void VenderLivro()
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
