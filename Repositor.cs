@@ -147,7 +147,7 @@ Bem Vindo qual das opções deseja selecionar?";
                         return;
                     }
 
-                    novaLinha = $"{codigo}\n{nome}\n{autor}\n{isbn}\n{genero}\n{precoFinal}\n{precoIVA}\n{quantidadeStock}\n---------------------------------------------------";
+                    novaLinha = $"{codigo}|{nome}|{autor}|{isbn}|{genero}|{precoFinal}|{precoIVA}|{quantidadeStock}";
 
                     // Adiciona uma linha em branco apenas se o arquivo não estiver vazio
                     if (new FileInfo(caminhoFicheiro).Length > 0)
@@ -255,7 +255,13 @@ Bem Vindo qual das opções deseja selecionar?";
             Console.Clear();
 
             Console.Write("Introduza o código do livro que deseja consultar stock: ");
-            string codigo = Console.ReadLine();
+            if (!int.TryParse(Console.ReadLine(), out int codigoLivro))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Erro: Por favor, insira um código de livro válido (número inteiro).");
+                Console.ReadKey();
+                return;
+            }
 
             string caminhoFicheiro = "..\\..\\Livros.txt";
 
@@ -267,28 +273,23 @@ Bem Vindo qual das opções deseja selecionar?";
 
                 for (int i = 0; i < linhas.Length; i++)
                 {
-                    if (linhas[i].Trim() == codigo)
+                    string[] dadosLivro = linhas[i].Split('|');
+
+                    // Verifica se o código do livro corresponde ao código fornecido
+                    if (dadosLivro.Length > 0 && int.TryParse(dadosLivro[0], out int codigo) && codigo == codigoLivro)
                     {
                         livroEncontrado = true;
 
-                        // Verifica se há linhas suficientes após a linha do código
-                        if (i + 8 < linhas.Length) // Adiciona 8 para ir até a linha após a divisão
-                        {
-                            // Exibe apenas o nome e o stock do livro
-                            Console.WriteLine($"\nLivro: {linhas[i + 1].Trim()}\nStock: {linhas[i + 7].Trim()}");
-                        }
-                        else
-                        {
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine($"Erro: Informações de stock ausentes para o livro {codigo}.");
-                        }
+                        // Exibe as informações do livro, incluindo o stock
+                        Console.WriteLine($"Livro: {dadosLivro[1].Trim()}\nStock: {dadosLivro[7].Trim()}");
+                        break;
                     }
                 }
 
                 if (!livroEncontrado)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"Erro: Livro com código {codigo} não encontrado.");
+                    Console.WriteLine($"Erro: Livro com código {codigoLivro} não encontrado.");
                 }
 
                 Console.ReadKey();

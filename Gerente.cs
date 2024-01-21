@@ -221,8 +221,10 @@ Bem Vindo qual das opções deseja selecionar?";
         }
         public static void ModificarFuncionario()
         {
+            Title = "Selecionar Funcionario";
+
             Console.Clear();
-            Console.WriteLine("Modificar funcionário:");
+            Console.WriteLine("Editar funcionário:");
 
             Console.Write("ID do funcionário a ser modificado: ");
             if (!int.TryParse(Console.ReadLine(), out int numeroLinha))
@@ -236,25 +238,36 @@ Bem Vindo qual das opções deseja selecionar?";
             string caminhoFicheiro = "..\\..\\DadosUtilizadores.txt";
             List<string> linhas = File.ReadAllLines(caminhoFicheiro).ToList();
 
+            Console.Clear();
             if (numeroLinha >= 1 && numeroLinha <= linhas.Count)
             {
-                string[] dados = linhas[numeroLinha - 1].Split(',');
-                string prompt = "O que deseja alterar? ";
-                ForegroundColor = ConsoleColor.White;
-                BackgroundColor = ConsoleColor.Black;
 
-                string[] options = { "Nome", "Password", "Cargo" }; // Guarda as opções do menu num array
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Estes são os dados do utilizador selecionado!\n");
+                Console.ForegroundColor = ConsoleColor.White;
+                string[] dados = linhas[numeroLinha - 1].Split(',');
+                Console.WriteLine($"Utilizador Selecionado: Nome --> {dados[0]}, Password --> {dados[1]}, Cargo --> {dados[2]}\n");
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Aperte ENTER para prosseguir para a alteração das informações de utilizador!");
+                Console.ReadLine();
+
+                string prompt = "O que deseja alterar? ";
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.BackgroundColor = ConsoleColor.Black;
+                string[] options = { "Nome", "Password", "Cargo" }; // Guarda as opções do menu num array             
                 NovoMenuEditarFuncionario mainMenu = new NovoMenuEditarFuncionario(prompt, options);
                 int SelectedFuncionario = mainMenu.Run5();
 
                 try
                 {
-
                     switch (SelectedFuncionario)
                     {
                         case 0:
                             Console.Clear();
-                            Console.WriteLine($"Funcionário atual: Nome --> {dados[0]}");
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine($"Nome do utilizador que vai ser editado --> {dados[0]}\n");
+                            Console.ForegroundColor = ConsoleColor.White;
                             Console.Write("Novo nome: ");
                             string novoNome = Console.ReadLine();
                             dados[0] = novoNome;
@@ -262,7 +275,12 @@ Bem Vindo qual das opções deseja selecionar?";
 
                         case 1:
                             Console.Clear();
-                            Console.WriteLine($"Funcionário atual: Password --> {dados[1]}");
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine($"Nome do utilizador que vai ser editado --> {dados[0]}");
+                            Console.WriteLine();
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine($"Password do utilizador Selecionado --> {dados[1]}\n");
+                            Console.ForegroundColor = ConsoleColor.White;
                             Console.Write("Nova password: ");
                             string novaPassword = Console.ReadLine();
                             dados[1] = novaPassword;
@@ -270,7 +288,12 @@ Bem Vindo qual das opções deseja selecionar?";
 
                         case 2:
                             Console.Clear();
-                            Console.WriteLine($"Funcionário atual: Cargo --> {dados[2]}");
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine($"Utilizador que vai ser editado --> {dados[0]}");
+                            Console.WriteLine();
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine($"Cargo do utilizador selecionado --> {dados[2]}\n");
+                            Console.ForegroundColor = ConsoleColor.White;
                             Console.Write("Novo cargo: ");
                             string novoCargo = Console.ReadLine();
                             dados[2] = novoCargo;
@@ -299,7 +322,7 @@ Bem Vindo qual das opções deseja selecionar?";
                 catch (Exception ex)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Opção inválida. Funcionário não modificad!");
+                    Console.WriteLine("Erro ao modificar o funcionário: " + ex.Message);
                 }
             }
             else
@@ -307,7 +330,6 @@ Bem Vindo qual das opções deseja selecionar?";
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("\nNúmero de linha inválido. Funcionário não modificado.");
             }
-
             Console.ReadLine();
         }
 
