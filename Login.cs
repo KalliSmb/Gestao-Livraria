@@ -18,7 +18,7 @@ namespace LP1_Livraria
         public static Cargo VerificarLogin(string utilizador, string password)
         {
             //Caminho do arquivo que contem os dados dos utilizadores
-            string caminhoArquivo = "..\\..\\DadosUtilizadores.txt";
+            string caminhoArquivo = "..\\..\\Funcionarios\\DadosUtilizadores.txt";
 
             try
             {

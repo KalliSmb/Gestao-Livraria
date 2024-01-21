@@ -81,7 +81,7 @@ Bem Vindo qual das opções deseja selecionar?";
             Console.Clear();
             WriteLine("Registar livro:\n");
 
-            string caminhoFicheiro = "..\\..\\Livros.txt";
+            string caminhoFicheiro = "..\\..\\Livros\\Livros.txt";
 
             try
             {
@@ -178,7 +178,7 @@ Bem Vindo qual das opções deseja selecionar?";
             Console.Write("Introduza o código do livro para adicionar stock: ");
             string codigo = Console.ReadLine();
 
-            string caminhoFicheiro = "..\\..\\Livros.txt";
+            string caminhoFicheiro = "..\\..\\Livros\\Livros.txt";
 
             try
             {
@@ -263,7 +263,7 @@ Bem Vindo qual das opções deseja selecionar?";
                 return;
             }
 
-            string caminhoFicheiro = "..\\..\\Livros.txt";
+            string caminhoFicheiro = "..\\..\\Livros\\Livros.txt";
 
             try
             {

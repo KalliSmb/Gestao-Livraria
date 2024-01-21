@@ -46,11 +46,11 @@
     <Compile Include="Caixa.cs" />
     <Compile Include="Gerente.cs" />
     <Compile Include="Login.cs" />
-    <Compile Include="MenuLoginNovo.cs" />
-    <Compile Include="NovoMenuCaixa.cs" />
-    <Compile Include="NovoMenuEditarFuncionario.cs" />
-    <Compile Include="NovoMenuGerente.cs" />
-    <Compile Include="NovoMenuRepositor.cs" />
+    <Compile Include="Menus\MenuLoginNovo.cs" />
+    <Compile Include="Menus\NovoMenuCaixa.cs" />
+    <Compile Include="Menus\NovoMenuEditarFuncionario.cs" />
+    <Compile Include="Menus\NovoMenuGerente.cs" />
+    <Compile Include="Menus\NovoMenuRepositor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositor.cs" />
@@ -59,8 +59,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="DadosUtilizadores.txt" />
-    <Content Include="Livros.txt" />
+    <Content Include="Funcionarios\DadosUtilizadores.txt" />
+    <Content Include="Livros\Livros.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -117,7 +117,7 @@ Bem Vindo qual das opções deseja selecionar?";
 
             string novaLinha = $"{utilizador},{password},{cargo}"; // Linha com todas as informações do funcionário
 
-            string caminhoFicheiro = "..\\..\\DadosUtilizadores.txt"; // Caminho do ficheiro
+            string caminhoFicheiro = "..\\..\\Funcionarios\\DadosUtilizadores.txt"; // Caminho do ficheiro
             File.AppendAllText(caminhoFicheiro, novaLinha + Environment.NewLine); // Guarda as informações no ficheiro e salta uma linha
 
             // Mensagem de criação do funcionário
@@ -143,7 +143,7 @@ Bem Vindo qual das opções deseja selecionar?";
                 return;
             }
 
-            string caminhoFicheiro = "..\\..\\DadosUtilizadores.txt";
+            string caminhoFicheiro = "..\\..\\Funcionarios\\DadosUtilizadores.txt";
             List<string> linhas = File.ReadAllLines(caminhoFicheiro).ToList();
 
             if (numeroLinha >= 1 && numeroLinha <= linhas.Count)
@@ -184,7 +184,7 @@ Bem Vindo qual das opções deseja selecionar?";
             Console.Clear();
             Console.WriteLine("Listar funcionários:\n");
 
-            string caminhoFicheiro = "..\\..\\DadosUtilizadores.txt"; // Caminho do ficheiro com as informações dos utilizadores
+            string caminhoFicheiro = "..\\..\\Funcionarios\\DadosUtilizadores.txt"; // Caminho do ficheiro com as informações dos utilizadores
 
             try
             {
@@ -235,7 +235,7 @@ Bem Vindo qual das opções deseja selecionar?";
                 return;
             }
 
-            string caminhoFicheiro = "..\\..\\DadosUtilizadores.txt";
+            string caminhoFicheiro = "..\\..\\Funcionarios\\DadosUtilizadores.txt";
             List<string> linhas = File.ReadAllLines(caminhoFicheiro).ToList();
 
             Console.Clear();
@@ -340,7 +340,7 @@ Bem Vindo qual das opções deseja selecionar?";
             Console.Clear();
 
             // Ler todos os livros do arquivo
-            string caminhoFicheiro = "..\\..\\Livros.txt";
+            string caminhoFicheiro = "..\\..\\Livros\\Livros.txt";
             List<string> linhas = new List<string>(File.ReadAllLines(caminhoFicheiro));
 
             // Verificar se há livros registrados
@@ -490,7 +490,7 @@ Bem Vindo qual das opções deseja selecionar?";
         {
             try
             {
-                string[] linhas = File.ReadAllLines("..\\..\\Livros.txt");
+                string[] linhas = File.ReadAllLines("..\\..\\Livros\\Livros.txt");
 
                 Console.WriteLine("Lista de Livros Disponíveis:\n");
 

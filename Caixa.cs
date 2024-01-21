@@ -79,7 +79,7 @@ Bem Vindo qual das opções deseja selecionar ? ";
             Console.Clear();
 
             // Ler todos os livros do arquivo
-            string caminhoFicheiro = "..\\..\\Livros.txt";
+            string caminhoFicheiro = "..\\..\\Livros\\Livros.txt";
             List<string> linhas = new List<string>(File.ReadAllLines(caminhoFicheiro));
 
             // Verificar se há livros registrados
