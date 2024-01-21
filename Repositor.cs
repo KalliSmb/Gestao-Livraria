@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using static System.Console;
@@ -79,7 +80,7 @@ Bem Vindo qual das opções deseja selecionar?";
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
             Console.Clear();
-            WriteLine("Registar livro:\n");
+            Title = "Registar Livro";
 
             string caminhoFicheiro = "..\\..\\Livros\\Livros.txt";
 
@@ -87,6 +88,20 @@ Bem Vindo qual das opções deseja selecionar?";
             {
                 string novaLinha;
                 bool continuarRegisto = true;
+
+                // Carregar os códigos existentes do arquivo para uma lista
+                List<int> codigosExistentes = new List<int>();
+                if (File.Exists(caminhoFicheiro))
+                {
+                    string[] linhas = File.ReadAllLines(caminhoFicheiro);
+                    for (int i = 1; i < linhas.Length; i += 9) // Começar de 1 para pegar a segunda linha de cada bloco
+                    {
+                        if (int.TryParse(linhas[i], out int codigoLivro))
+                        {
+                            codigosExistentes.Add(codigoLivro);
+                        }
+                    }
+                }
 
                 while (continuarRegisto)
                 {
@@ -107,7 +122,20 @@ Bem Vindo qual das opções deseja selecionar?";
                         continue;
                     }
 
-                    Console.Write("Nome do livro: ");
+                    // Verificar se o código já existe
+                    if (codigosExistentes.Contains(codigo))
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Erro: Este código já foi utilizado. Escolha um código diferente.\n");
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("Aperte ENTER para digitar um código novo!");
+                        Console.ReadKey();
+                        Console.Clear();
+                        continue;
+
+                    }
+
+                    Console.Write("\nNome do livro: ");
                     string nome = Console.ReadLine();
 
                     Console.Write("Autor: ");
@@ -147,17 +175,16 @@ Bem Vindo qual das opções deseja selecionar?";
                         return;
                     }
 
-                    novaLinha = $"{codigo}|{nome}|{autor}|{isbn}|{genero}|{precoFinal}|{precoIVA}|{quantidadeStock}";
-
-                    // Adiciona uma linha em branco apenas se o arquivo não estiver vazio
-                    if (new FileInfo(caminhoFicheiro).Length > 0)
-                    {
-                        novaLinha = Environment.NewLine + novaLinha;
-                    }
+                    novaLinha = $"{Environment.NewLine}{codigo}\n{nome}\n{autor}\n{isbn}\n{genero}\n{precoFinal}\n{precoIVA}\n{quantidadeStock}\n---------------------------------------------------";
 
                     File.AppendAllText(caminhoFicheiro, novaLinha);
+                    codigosExistentes.Add(codigo); // Adicionar o novo código à lista de códigos existentes
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("Novo livro registado com sucesso!\n");
+                    Console.WriteLine("Aperte ENTER para digitar um código novo!");
+                    Console.ReadKey();
+                    Console.Clear();
+                    continue;
                 }
 
                 Console.ReadKey();
@@ -170,7 +197,6 @@ Bem Vindo qual das opções deseja selecionar?";
                 Console.Clear();
             }
         }
-
         public static void AdicionarStock()
         {
             Console.Clear();
@@ -217,18 +243,19 @@ Bem Vindo qual das opções deseja selecionar?";
                                 File.WriteAllText(caminhoFicheiro, string.Join("\n", linhasFormatadas));
 
                                 Console.ForegroundColor = ConsoleColor.Green;
-                                Console.WriteLine($"\nStock atualizado com sucesso. Novo stock: {novoStock}");
+                                Console.WriteLine($"\nStock atualizado com sucesso! Novo stock: {novoStock}\n");
+                                Console.WriteLine("Aperte ENTER para voltar ao menu!");
                             }
                             else
                             {
                                 Console.ForegroundColor = ConsoleColor.Red;
-                                Console.WriteLine("Erro: A quantidade a adicionar deve ser um número inteiro.");
+                                Console.WriteLine("Erro: A quantidade a adicionar deve ser um número inteiro!");
                             }
                         }
                         else
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine($"Erro: Informações de stock ausentes para o livro {codigo}.");
+                            Console.WriteLine($"Erro: Informações de stock ausentes para o livro {codigo}!");
                         }
                     }
                 }
@@ -236,7 +263,7 @@ Bem Vindo qual das opções deseja selecionar?";
                 if (!livroEncontrado)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"Erro: Livro com código {codigo} não encontrado.");
+                    Console.WriteLine($"Erro: Livro com código {codigo} não encontrado!");
                 }
 
                 Console.ReadKey();
@@ -255,13 +282,7 @@ Bem Vindo qual das opções deseja selecionar?";
             Console.Clear();
 
             Console.Write("Introduza o código do livro que deseja consultar stock: ");
-            if (!int.TryParse(Console.ReadLine(), out int codigoLivro))
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Erro: Por favor, insira um código de livro válido (número inteiro).");
-                Console.ReadKey();
-                return;
-            }
+            string codigo = Console.ReadLine();
 
             string caminhoFicheiro = "..\\..\\Livros\\Livros.txt";
 
@@ -273,23 +294,30 @@ Bem Vindo qual das opções deseja selecionar?";
 
                 for (int i = 0; i < linhas.Length; i++)
                 {
-                    string[] dadosLivro = linhas[i].Split('|');
-
-                    // Verifica se o código do livro corresponde ao código fornecido
-                    if (dadosLivro.Length > 0 && int.TryParse(dadosLivro[0], out int codigo) && codigo == codigoLivro)
+                    if (linhas[i].Trim() == codigo)
                     {
                         livroEncontrado = true;
 
-                        // Exibe as informações do livro, incluindo o stock
-                        Console.WriteLine($"Livro: {dadosLivro[1].Trim()}\nStock: {dadosLivro[7].Trim()}");
-                        break;
+                        // Verifica se há linhas suficientes após a linha do código
+                        if (i + 8 < linhas.Length) // Adiciona 8 para ir até a linha após a divisão
+                        {
+                            // Exibe apenas o nome e o stock do livro
+                            Console.WriteLine($"\nLivro: {linhas[i + 1].Trim()}\nStock: {linhas[i + 7].Trim()}\n");
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine("Aperte ENTER para regressar ao menu!");
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"Erro: Informações de stock ausentes para o livro {codigo}.");
+                        }
                     }
                 }
 
                 if (!livroEncontrado)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"Erro: Livro com código {codigoLivro} não encontrado.");
+                    Console.WriteLine($"Erro: Livro com código {codigo} não encontrado.");
                 }
 
                 Console.ReadKey();
