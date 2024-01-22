@@ -7,42 +7,36 @@ using static System.Console;
 
 namespace LP1_Livraria.Menus
 {
-    internal class NovoMenuEditarFuncionario
+    internal class MenuEnviarMensagemRepositor
     {
-        //Definir variáveis
-        private int SelectedEditarFuncionario;
+        private int SelectedMensagemRepositor;
         private string[] Options;
         private string Prompt;
 
         //Construtor
-        public NovoMenuEditarFuncionario(string prompt, string[] options)
+        public MenuEnviarMensagemRepositor(string prompt, string[] options)
         {
-            //Valor do parámetro prompt
             Prompt = prompt;
-
-            //Valor do parámetro options
             Options = options;
-
-            //Opção selecionada no menu
-            SelectedEditarFuncionario = 0;
+            SelectedMensagemRepositor = 0;
         }
 
         //Método
-        private void DisplayEditarFuncionario()
+        private void DisplayMensagemRepositor()
         {
-            //Exibe mensagem
+            //Exibe a mensagem
             WriteLine(Prompt);
 
-            //Loop com as opcões do menu
+            //Loop com as opções do menu
             for (int i = 0; i < Options.Length; i++)
             {
-                //Obtém opção atual no indice i
+                //Obtéma opção atual do indice i
                 string currentOption = Options[i];
                 //Variável do simbolo que aparece atrás de cada opção
                 string prefixo;
 
-                //Verifica se a opção atual é a selecionada 
-                if (i == SelectedEditarFuncionario)
+                //Verifica se a opção atual é a selecionada
+                if (i == SelectedMensagemRepositor)
                 {
                     prefixo = "-->";
                     ForegroundColor = ConsoleColor.Black;
@@ -61,54 +55,53 @@ namespace LP1_Livraria.Menus
             ResetColor();
         }
 
-        //Método 
-        public int Run8()
+        //Método
+        public int Run9()
         {
             //Variável de tecla que vai pressionar
-            ConsoleKey KeyPressed8;
+            ConsoleKey KeyPressed9;
 
             //Loop estará sempre em funcionamento até que a tecla ENTER seja pressionada
             do
             {
-
                 //Limpar a consola
                 Clear();
-                //Método para Exibir Menu de Gerente
-                DisplayEditarFuncionario();
+                //Método para Exibir Menu de Caixa
+                DisplayMensagemRepositor();
 
                 //Lê a tecla sem exibir no console
                 ConsoleKeyInfo KeyInfo = ReadKey(true);
-                KeyPressed8 = KeyInfo.Key;
+                KeyPressed9 = KeyInfo.Key;
 
                 //Verifica se a tecla pressionada é a seta para cima 
-                if (KeyPressed8 == ConsoleKey.UpArrow)
+                if (KeyPressed9 == ConsoleKey.UpArrow)
                 {
                     //Indice da opção selecionada
-                    SelectedEditarFuncionario--;
+                    SelectedMensagemRepositor--;
 
                     //Se o indice fôr -1, então ajusta para a ultima opção do menu 
-                    if (SelectedEditarFuncionario == -1)
+                    if (SelectedMensagemRepositor == -1)
                     {
-                        SelectedEditarFuncionario = Options.Length - 1;
+                        SelectedMensagemRepositor = Options.Length - 1;
                     }
                 }
                 //Verifica se a tecla pressionada é a seta para baixo
-                else if (KeyPressed8 == ConsoleKey.DownArrow)
+                else if (KeyPressed9 == ConsoleKey.DownArrow)
                 {
                     //Indice da opção selecionada
-                    SelectedEditarFuncionario++;
+                    SelectedMensagemRepositor++;
 
                     //Se atingir o comprimento total das opções, volta para a primeira opção do menu 
-                    if (SelectedEditarFuncionario == Options.Length)
+                    if (SelectedMensagemRepositor == Options.Length)
                     {
-                        SelectedEditarFuncionario = 0;
+                        SelectedMensagemRepositor = 0;
                     }
                 }
 
-            } while (KeyPressed8 != ConsoleKey.Enter);
+            } while (KeyPressed9 != ConsoleKey.Enter);
 
             //Retorna o indice da opção selecionada
-            return SelectedEditarFuncionario;
+            return SelectedMensagemRepositor;
         }
     }
 }

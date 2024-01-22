@@ -98,8 +98,8 @@ Selecione uma das opcões!";
                 return; // Retorna, não permitindo a entrada da senha
             }
             Console.Write("Password: ");
-            string password = LerSenhaOculta();
-            if (string.IsNullOrWhiteSpace(password))
+            string senha = LerSenhaOculta();
+            if (string.IsNullOrWhiteSpace(senha))
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Erro: Por favor, escreva a password do utilizador.");
@@ -108,30 +108,44 @@ Selecione uma das opcões!";
                 return; // Retorna, não permitindo a entrada da senha
             }
 
-            cargoAtual = Login.VerificarLogin(utilizador, password);
+            // Chame o método VerificarLogin uma vez
+            Login.Utilizador usuarioLogado = Login.VerificarLogin(utilizador, senha);
 
-            switch (cargoAtual)
+            if (usuarioLogado != null)
             {
-                case Login.Cargo.Gerente:
-                    Gerente.MenuGerenteNovo();
-                    break;
+                cargoAtual = usuarioLogado.Cargo;
 
-                case Login.Cargo.Caixa:
-                    Caixa.MenuCaixa();
-                    break;
+                switch (cargoAtual)
+                {
+                    case Login.Cargo.Gerente:
+                        Gerente.MenuGerenteNovo();
+                        break;
 
-                case Login.Cargo.Repositor:
-                    Repositor.MenuRepositor();
-                    break;
+                    case Login.Cargo.Caixa:
+                        Caixa.MenuCaixa();
+                        break;
 
-                default:
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Login falhou. Utilizador ou password inválidos.");
-                    Console.ReadKey();
-                    Console.Clear();
-                    break;
+                    case Login.Cargo.Repositor:
+                        Repositor.MenuRepositor();
+                        break;
+
+                    default:
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Login falhou. Utilizador ou password inválidos.");
+                        Console.ReadKey();
+                        Console.Clear();
+                        break;
+                }
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Login falhou. Utilizador ou password inválidos.");
+                Console.ReadKey();
+                Console.Clear();
             }
         }
+
 
 
         private static string LerSenhaOculta()

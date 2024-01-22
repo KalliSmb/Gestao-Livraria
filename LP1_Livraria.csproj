@@ -46,6 +46,9 @@
     <Compile Include="Caixa.cs" />
     <Compile Include="Gerente.cs" />
     <Compile Include="Login.cs" />
+    <Compile Include="Menus\MenuEnviarMensagemCaixa.cs" />
+    <Compile Include="Menus\MenuEnviarMensagemGerente.cs" />
+    <Compile Include="Menus\MenuEnviarMensagemRepositor.cs" />
     <Compile Include="Menus\MenuLoginNovo.cs" />
     <Compile Include="Menus\NovoMenuCaixa.cs" />
     <Compile Include="Menus\NovoMenuEditarFuncionario.cs" />
@@ -61,6 +64,13 @@
   <ItemGroup>
     <Content Include="Funcionarios\DadosUtilizadores.txt" />
     <Content Include="Livros\Livros.txt" />
+    <Content Include="Logs\Log.txt" />
+    <Content Include="Logs\RegistoRepositor.txt" />
+    <Content Include="Logs\RegistoVendas.txt" />
+    <Content Include="Mensagens\Mensagens_Chat_Geral.txt" />
+    <Content Include="Mensagens\Mensagens_Gerente_Caixa.txt" />
+    <Content Include="Mensagens\Mensagens_Gerente_Repositor.txt" />
+    <Content Include="Mensagens\Mensagens_Repositor_Caixa.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

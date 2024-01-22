@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Linq;
 using static System.Console;
+using LP1_Livraria.Menus;
 
 namespace LP1_Livraria
 {
@@ -33,7 +35,7 @@ Bem Vindo qual das opções deseja selecionar ? ";
                 ForegroundColor = ConsoleColor.White;
                 BackgroundColor = ConsoleColor.Black;
 
-                string[] options = { "Vender Livro", "Listar livros pelo autor", "Listar livros pelo género", "Voltar para o menu principal" };
+                string[] options = { "Vender Livro", "Listar livros pelo autor", "Listar livros pelo género", "Enviar Mensagem", "Voltar para o menu principal" };
                 NovoMenuCaixa mainMenu = new NovoMenuCaixa(prompt, options);
                 int SelectedCaixa = mainMenu.Run4();
 
@@ -54,6 +56,10 @@ Bem Vindo qual das opções deseja selecionar ? ";
                             break;
 
                         case 3:
+                            EnviarMensagem();
+                            break;
+
+                        case 4:
                             Console.Clear();
                             return; // sai do método
 
@@ -72,6 +78,136 @@ Bem Vindo qual das opções deseja selecionar ? ";
                 }
             }
         }
+
+        public static void EnviarMensagem()
+        {
+            string prompt = "Escolher Destinatário da Mensagem ";
+            ForegroundColor = ConsoleColor.White;
+            BackgroundColor = ConsoleColor.Black;
+
+            string[] options = { "Gerente", "Repositor", "Chat Geral" };
+            MenuEnviarMensagemCaixa mainMenu = new MenuEnviarMensagemCaixa(prompt, options);
+            int SelectedMensagemCaixa = mainMenu.Run6();
+
+            Console.Clear();
+            try
+            {
+                string remetente = "Caixa" + ((Login.UtilizadorAutenticado != null) ? " " + Login.UtilizadorAutenticado.Nome : " Desconhecido");
+                string destinatario = (SelectedMensagemCaixa == 0) ? "Gerente" : (SelectedMensagemCaixa == 1) ? "Repositor" : (SelectedMensagemCaixa == 2) ? "Chat Geral" : "";
+
+                ExibirMensagens(remetente, destinatario);
+
+                bool continuarEnviando = true;
+
+                while (continuarEnviando)
+                {
+                    Console.Write($"\nEscreva a mensagem para {destinatario}: ");
+                    string mensagem = Console.ReadLine();
+
+                    Mensagens.EnviarMensagem(remetente, destinatario, mensagem);
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Mensagem enviada com sucesso!");
+                    Console.ResetColor();
+
+                    Console.Write("\nPressione Enter para enviar outra mensagem ou digite 'exit' para sair: ");
+                    string resposta = Console.ReadLine()?.Trim().ToLower();
+                    continuarEnviando = resposta != "exit";
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("\nAperte ENTER para voltar ao menu!");
+
+                    if (continuarEnviando)
+                    {
+                        Console.Clear();
+                        ExibirMensagens(remetente, destinatario);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Erro Mensagem Inválida!");
+                Console.ReadKey();
+                Console.Clear();
+            }
+            Console.ReadLine();
+        }
+
+        private static void ExibirMensagens(string remetente, string destinatario)
+        {
+            List<string> mensagens = Mensagens.LerMensagens(remetente, destinatario);
+
+            Console.WriteLine(mensagens.Count > 0 ? "Mensagens existentes:" : "Não há mensagens existentes.");
+
+            foreach (var mensagemExistente in mensagens)
+            {
+                Console.WriteLine(mensagemExistente);
+            }
+        }
+
+
+        public class Mensagens
+        {
+            public static void EnviarMensagem(string remetente, string destinatario, string mensagem)
+            {
+                string fileName = ObterNomeArquivo(remetente, destinatario);
+                string mensagemFormatada = $"{DateTime.Now}: {remetente} diz para {destinatario} - {mensagem}";
+                SalvarMensagem(fileName, mensagemFormatada);
+            }
+
+            public static List<string> LerMensagens(string remetente, string destinatario)
+            {
+                string fileName = ObterNomeArquivo(remetente, destinatario);
+
+                try
+                {
+                    return new List<string>(File.ReadAllLines(fileName));
+                }
+                catch (FileNotFoundException)
+                {
+                    // Se o arquivo não existir, retorna uma lista vazia
+                    return new List<string>();
+                }
+            }
+
+            private static string ObterNomeArquivo(string remetente, string destinatario)
+            {
+                if ((remetente == ("Caixa" + ((Login.UtilizadorAutenticado != null) ? " " + Login.UtilizadorAutenticado.Nome : " Desconhecido")) && destinatario == "Gerente") ||
+                (remetente == "Gerente" && destinatario == ("Caixa" + ((Login.UtilizadorAutenticado != null) ? " " + Login.UtilizadorAutenticado.Nome : " Desconhecido"))))
+                {
+                    return $"..\\..\\Mensagens\\Mensagens_Gerente_Caixa.txt";
+                }
+                else if ((remetente == ("Caixa" + ((Login.UtilizadorAutenticado != null) ? " " + Login.UtilizadorAutenticado.Nome : " Desconhecido")) && destinatario == "Repositor") ||
+                (remetente == "Repositor" && destinatario == ("Caixa" + ((Login.UtilizadorAutenticado != null) ? " " + Login.UtilizadorAutenticado.Nome : " Desconhecido"))))
+                {
+                    return $"..\\..\\Mensagens\\Mensagens_Repositor_Caixa.txt";
+                }
+                else if ((remetente == ("Caixa" + ((Login.UtilizadorAutenticado != null) ? " " + Login.UtilizadorAutenticado.Nome : " Desconhecido")) && destinatario == "Chat Geral"))
+                {
+                    return $"..\\..\\Mensagens\\Mensagens_Chat_Geral.txt";
+                }
+                else
+                {
+                    return $"..\\..\\Mensagens\\Mensagens_{remetente}_{destinatario}.txt";
+                }
+            }
+
+            public static void SalvarMensagem(string fileName, string mensagem)
+            {
+                try
+                {
+                    // Adiciona a mensagem ao arquivo de mensagens
+                    File.AppendAllText(fileName, $"{mensagem}\n");
+                }
+                catch (Exception ex)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Erro ao salvar mensagem: {ex.Message}");
+                    Console.ResetColor();
+                }
+            }
+        }
+
 
         public static void VenderLivro()
         {
@@ -96,94 +232,91 @@ Bem Vindo qual das opções deseja selecionar ? ";
                     Console.WriteLine("\nIntroduza os códigos dos livros para vender (separados por espaços):");
                     string[] codigosInput = Console.ReadLine().Split(' ');
 
-                    Console.Clear();
-
                     double totalVenda = 0;
                     double totalIVA = 0;
-                    int totalLivrosVendidos = 0; // Adicionando a variável para rastrear o total de livros vendidos
+                    int totalLivrosVendidos = 0;
 
-                    // Lista de linhas modificadas
-                    List<string> linhasModificadas = new List<string>();
-
-                    // Loop pelos códigos introduzidos
                     foreach (string codigoInput in codigosInput)
                     {
-                        // Verifica se o código é um número válido
-                        if (int.TryParse(codigoInput, out int codigo))
+                        int codigo;
+                        if (int.TryParse(codigoInput, out codigo))
                         {
-                            // Busca o livro pelo código
-                            int indexLivro = -1;
-                            for (int i = 0; i < linhas.Count; i += 9)
+                            bool livroEncontrado = false;
+
+                            // Loop até que o livro seja encontrado ou a entrada seja concluída
+                            while (!livroEncontrado)
                             {
-                                if (int.Parse(linhas[i + 1].Trim()) == codigo)
+                                int indexLivro = linhas.FindIndex(l => l.StartsWith($"{codigo}|"));
+
+                                if (indexLivro != -1)
                                 {
-                                    indexLivro = i;
-                                    break;
-                                }
-                            }
+                                    string[] detalhesLivro = linhas[indexLivro].Split('|');
 
-                            // Se o livro foi encontrado
-                            if (indexLivro != -1)
-                            {
-                                // Exibe detalhes do livro e solicita a quantidade desejada
-                                Console.WriteLine($"\nDetalhes do Livro (Código: {codigo}):");
-                                Console.WriteLine($"Título: {linhas[indexLivro + 2].Trim()}");
-                                Console.WriteLine($"Autor: {linhas[indexLivro + 3].Trim()}");
-                                Console.WriteLine($"Preço: {linhas[indexLivro + 6].Trim()}€");
-                                Console.WriteLine($"Stock: {linhas[indexLivro + 8].Trim()}");
-                                Console.Write("Quantidade desejada: ");
+                                    Console.WriteLine($"\nDetalhes do Livro (Código: {codigo}):");
+                                    Console.WriteLine($"Título: {detalhesLivro[1]}");
+                                    Console.WriteLine($"Autor: {detalhesLivro[2]}");
+                                    Console.WriteLine($"ISBN: {detalhesLivro[3]}");
+                                    Console.WriteLine($"Género: {detalhesLivro[4]}");
+                                    Console.WriteLine($"Preço: {detalhesLivro[5]}€");
+                                    Console.WriteLine($"Stock: {detalhesLivro[7]}");
+                                    Console.WriteLine();
+                                    Console.Write("Quantidade desejada: ");
 
-                                // Verifica se a quantidade é um número válido
-                                if (int.TryParse(Console.ReadLine(), out int quantidadeDesejada))
-                                {
-                                    int estoqueAtual = int.Parse(linhas[indexLivro + 8].Trim());
-
-                                    // Verifica se há estoque suficiente
-                                    if (quantidadeDesejada <= estoqueAtual)
+                                    if (int.TryParse(Console.ReadLine(), out int quantidadeDesejada))
                                     {
-                                        double precoUnitario = double.Parse(linhas[indexLivro + 6].Trim());
-                                        double precoVenda = precoUnitario * quantidadeDesejada;
-                                        double iva = double.Parse(linhas[indexLivro + 7].Trim()) * quantidadeDesejada;
+                                        int estoqueAtual = int.Parse(detalhesLivro[7].Trim());
 
-                                        totalVenda += precoVenda;
-                                        totalIVA += iva;
-                                        totalLivrosVendidos += quantidadeDesejada; // Incrementa o total de livros vendidos
+                                        if (quantidadeDesejada <= estoqueAtual)
+                                        {
+                                            double precoUnitario = double.Parse(detalhesLivro[5].Trim());
+                                            double precoVenda = precoUnitario * quantidadeDesejada;
+                                            double iva = double.Parse(detalhesLivro[6].Trim()) * quantidadeDesejada;
 
-                                        Console.WriteLine($"IVA (23%): {iva}€");
-                                        Console.WriteLine($"Subtotal: {precoVenda}€");
+                                            totalVenda += precoVenda;
+                                            totalIVA += iva;
+                                            totalLivrosVendidos += quantidadeDesejada;
 
-                                        // Atualiza o estoque
-                                        linhas[indexLivro + 8] = (estoqueAtual - quantidadeDesejada).ToString();
+                                            Console.WriteLine($"IVA (23%): {iva}€");
+                                            Console.WriteLine($"Subtotal: {precoVenda}€");
+
+                                            // Atualiza o estoque
+                                            linhas[indexLivro] = $"{detalhesLivro[0]}|{detalhesLivro[1]}|{detalhesLivro[2]}|{detalhesLivro[3]}|{detalhesLivro[4]}|{detalhesLivro[5]}|{detalhesLivro[6]}|{estoqueAtual - quantidadeDesejada}";
+                                            File.WriteAllLines(caminhoFicheiro, linhas);
+
+                                            livroEncontrado = true;
+                                        }
+                                        else
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Red;
+                                            Console.WriteLine("Erro: Quantidade desejada superior ao estoque disponível.");
+                                            Console.ForegroundColor = ConsoleColor.White;
+                                        }
                                     }
                                     else
                                     {
                                         Console.ForegroundColor = ConsoleColor.Red;
-                                        Console.WriteLine("Erro: Quantidade desejada superior ao estoque disponível.");
+                                        Console.WriteLine("Erro: Quantidade inválida.");
+                                        Console.ForegroundColor = ConsoleColor.White;
                                     }
                                 }
                                 else
                                 {
                                     Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine("Erro: Quantidade inválida.");
+                                    Console.WriteLine($"Erro: Livro com código {codigo} não encontrado.");
+                                    livroEncontrado = true;  // Para sair do loop se o livro não for encontrado
+                                    Console.ForegroundColor = ConsoleColor.White;
                                 }
-                            }
-                            else
-                            {
-                                Console.ForegroundColor = ConsoleColor.Red;
-                                Console.WriteLine($"Erro: Livro com código {codigo} não encontrado.");
+                                File.AppendAllText("..\\..\\Logs\\RegistoVendas.txt", $"{DateTime.Now}|Código: {codigo}|Preço: {totalVenda}|IVA: {totalIVA}|Quantidade: {totalLivrosVendidos}|Vendido por: Caixa {Login.UtilizadorAutenticado.Nome}\n");
                             }
                         }
                         else
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine($"Erro: Código inválido.");
+                            Console.ForegroundColor = ConsoleColor.White;
                         }
                     }
 
-                    // Adiciona as linhas modificadas à lista
-                    linhasModificadas.AddRange(linhas);
-
-                    // Aplica o desconto de 10% se a venda ultrapassar 50 euros
                     if (totalVenda > 50)
                     {
                         double desconto = totalVenda * 0.10;
@@ -203,8 +336,6 @@ Bem Vindo qual das opções deseja selecionar ? ";
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("Venda realizada com sucesso!");
 
-                    // Salva as alterações no arquivo com quebra de linha adequada
-                    File.WriteAllText(caminhoFicheiro, string.Join(Environment.NewLine, linhasModificadas), Encoding.UTF8);
                     Console.ReadKey();
                 }
                 catch (Exception ex)
@@ -213,6 +344,7 @@ Bem Vindo qual das opções deseja selecionar ? ";
                     Console.WriteLine($"Erro ao realizar a venda: {ex.Message}");
                     Console.ReadKey();
                     Console.Clear();
+                    return;
                 }
             }
             else
@@ -220,29 +352,59 @@ Bem Vindo qual das opções deseja selecionar ? ";
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Não há livros registrados para realizar a venda.");
                 Console.ReadKey();
+                return;
             }
-
-            Console.Clear();
         }
+
+
 
         public static void ListarLivros()
         {
             try
             {
-                string[] linhas = File.ReadAllLines("..\\..\\Livros.txt");
+                string[] linhas = File.ReadAllLines("..\\..\\Livros\\Livros.txt");
 
                 Console.WriteLine("Lista de Livros Disponíveis:\n");
 
-                for (int i = 0; i < linhas.Length; i += 9)
+                foreach (string linha in linhas)
                 {
-                    // Verifica se há informações suficientes para um livro
-                    if (i + 8 < linhas.Length && !string.IsNullOrWhiteSpace(linhas[i + 8]))
+                    // Dividir a linha usando o caractere "|" como separador
+                    string[] dadosLivro = linha.Split('|');
+
+                    // Certificar-se de que há informações suficientes
+                    if (dadosLivro.Length >= 8)
                     {
-                        Console.WriteLine($"ID: {linhas[i + 1].Trim()}");
-                        Console.WriteLine($"Título: {linhas[i + 2].Trim()}");
-                        Console.WriteLine($"Autor: {linhas[i + 3].Trim()}");
-                        Console.WriteLine($"Preço: {linhas[i + 6].Trim()}€");
-                        Console.WriteLine($"Stock: {linhas[i + 8].Trim()}\n");
+                        // Extrair o código do livro
+                        string codigoLivro = dadosLivro[0].Trim();
+
+                        // Verificar se o código é um número válido
+                        if (int.TryParse(codigoLivro, out int codigo))
+                        {
+                            int estoque;
+                            if (int.TryParse(dadosLivro[7].Replace("Stock: ", "").Trim(), out estoque))
+                            {
+                                if (estoque > 0)
+                                {
+                                    Console.WriteLine($"Código: {codigo}");
+                                    Console.WriteLine($"Título: {dadosLivro[1].Trim()}");
+                                    Console.WriteLine($"Autor: {dadosLivro[2].Trim()}");
+                                    Console.WriteLine($"ISBN: {dadosLivro[3].Trim()}");
+                                    Console.WriteLine($"Gênero: {dadosLivro[4].Trim()}");
+                                    Console.WriteLine($"Preço: {dadosLivro[5].Trim()}€");
+                                    Console.WriteLine($"Stock: {estoque}\n");
+                                }
+                            }
+                            else
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine($"Erro: Estoque inválido - {dadosLivro[7]}");
+                            }
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"Erro: Código inválido - {codigoLivro}");
+                        }
                     }
                 }
             }
@@ -261,35 +423,48 @@ Bem Vindo qual das opções deseja selecionar ? ";
                 Console.WriteLine("Introduza o nome do autor que deseja listar os livros:");
                 string autorInput = Console.ReadLine();
 
-                string[] linhas = File.ReadAllLines("..\\..\\Livros.txt"); // Guarda no array todas as linhas do ficheiro
+                string[] linhas = File.ReadAllLines("..\\..\\Livros\\Livros.txt");
 
                 Console.Clear();
-                Console.WriteLine("Livros do autor " + autorInput + ":\n");
+                Console.WriteLine($"Livros do autor {autorInput}:\n");
 
-                // Loop pelas linhas para procurar os livros do autor
-                for (int i = 0; i < linhas.Length; i += 9)
+                bool encontrouLivros = false;
+
+                foreach (string linha in linhas)
                 {
-                    // Verifica se há algum elemento não preenchido
-                    if (i + 8 < linhas.Length)
+                    string[] dadosLivro = linha.Split('|');
+
+                    // Verifica se há informações suficientes para um livro
+                    if (dadosLivro.Length >= 8)
                     {
                         // Verifica se o autor na linha atual corresponde ao autor introduzido
-                        if (linhas[i + 3].Equals(autorInput, StringComparison.OrdinalIgnoreCase))
+                        if (dadosLivro[2].Equals(autorInput, StringComparison.OrdinalIgnoreCase))
                         {
-                            Console.WriteLine($"ID: {linhas[i + 1]}");
-                            Console.WriteLine($"Título: {linhas[i + 2]}\n");
+                            Console.WriteLine($"Título: {dadosLivro[1]}\n");
+                            encontrouLivros = true;
                         }
                     }
+                }
+
+                if (!encontrouLivros)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Erro: Nenhum livro encontrado para o autor {autorInput}.");
+                    Console.ForegroundColor = ConsoleColor.White;
                 }
             }
             catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"Erro ao listar livros por autor: {ex.Message}");
+                Console.ForegroundColor = ConsoleColor.White;
             }
 
             Console.ReadKey();
             Console.Clear();
         }
+
+
 
         public static void ListarLivrosGenero()
         {
@@ -297,33 +472,44 @@ Bem Vindo qual das opções deseja selecionar ? ";
             {
                 Console.Clear();
                 Console.WriteLine("Introduza o género de livro que deseja listar:");
-                string generoInput = Console.ReadLine();
+                string generoInput = Console.ReadLine().Trim(); // Remova espaços extras
 
-                string[] linhas = File.ReadAllLines("..\\..\\Livros.txt"); // Guarda no array todas as linhas do ficheiro
+                string[] linhas = File.ReadAllLines("..\\..\\Livros\\Livros.txt");
 
                 Console.Clear();
-                Console.WriteLine("Livros do género " + generoInput + ":\n");
+                Console.WriteLine($"Livros do género {generoInput}:\n");
 
-                // Loop pelas linhas para procurar os livros do género
-                for (int i = 0; i < linhas.Length; i += 9)
+                bool encontrouLivros = false;
+
+                foreach (string linha in linhas)
                 {
-                    // Verifica se há algum elemento não preenchido
-                    if (i + 8 < linhas.Length)
+                    string[] dadosLivro = linha.Split('|');
+
+                    // Verifica se há informações suficientes para um livro
+                    if (dadosLivro.Length >= 8) // Modifiquei para 8, pois parece ser o número correto de campos
                     {
                         // Verifica se o género na linha atual corresponde ao género introduzido
-                        if (linhas[i + 5].Equals(generoInput, StringComparison.OrdinalIgnoreCase))
+                        if (dadosLivro[4].Trim().Equals(generoInput, StringComparison.OrdinalIgnoreCase)) // Remova espaços extras
                         {
-                            Console.WriteLine($"ID: {linhas[i + 1]}");
-                            Console.WriteLine($"Título: {linhas[i + 2]}");
-                            Console.WriteLine($"Autor: {linhas[i + 3]}\n");
+                            Console.WriteLine($"Título: {dadosLivro[1]}");
+                            Console.WriteLine($"Autor: {dadosLivro[2]}\n");
+                            encontrouLivros = true;
                         }
                     }
+                }
+
+                if (!encontrouLivros)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Erro: Nenhum livro encontrado para o género {generoInput}.");
+                    Console.ForegroundColor = ConsoleColor.White;
                 }
             }
             catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"Erro ao listar livros por género: {ex.Message}");
+                Console.ForegroundColor = ConsoleColor.White;
             }
 
             Console.ReadKey();

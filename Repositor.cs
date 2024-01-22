@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using static System.Console;
+using System.Collections.Generic;
+using LP1_Livraria.Menus;
 
 namespace LP1_Livraria
 {
@@ -34,7 +35,7 @@ Bem Vindo qual das opções deseja selecionar?";
                 ForegroundColor = ConsoleColor.White;
                 BackgroundColor = ConsoleColor.Black;
 
-                string[] options = { "Consultar Stock", "Adicionar Stock", "Registar Livro", "Voltar para o menu principal" };
+                string[] options = { "Consultar Stock", "Adicionar Stock", "Registar Livro", "Enviar Mensagem", "Voltar para o menu principal" };
                 NovoMenuRepositor mainMenu = new NovoMenuRepositor(prompt, options);
                 int SelectedRepositor = mainMenu.Run3();
 
@@ -56,6 +57,10 @@ Bem Vindo qual das opções deseja selecionar?";
                             break;
 
                         case 3:
+                            EnviarMensagem();
+                            break;
+
+                        case 4:
                             Console.Clear();
                             return; // sai do método 
 
@@ -75,12 +80,145 @@ Bem Vindo qual das opções deseja selecionar?";
             }
         }
 
+        public static void EnviarMensagem()
+        {
+            Title = "Enviar Mensagem";
+            Console.Clear();
+            string prompt = "Escolher Destinatário da Mensagem! ";
+            ForegroundColor = ConsoleColor.White;
+            BackgroundColor = ConsoleColor.Black;
+
+            string[] options = { "Gerente", "Caixa", "Chat Geral" };
+            MenuEnviarMensagemRepositor mainMenu = new MenuEnviarMensagemRepositor(prompt, options);
+            int SelectedMensagemRepositor = mainMenu.Run9();
+
+            Console.Clear();
+            try
+            {
+                string remetente = "Repositor" + ((Login.UtilizadorAutenticado != null) ? " " + Login.UtilizadorAutenticado.Nome : " Desconhecido");
+                string destinatario = (SelectedMensagemRepositor == 0) ? "Gerente" : (SelectedMensagemRepositor == 1) ? "Caixa" : (SelectedMensagemRepositor == 2) ? "Chat Geral" : "";
+
+                ExibirMensagens(remetente, destinatario);
+
+                bool continuarEnviando = true;
+
+                while (continuarEnviando)
+                {
+                    Console.Write($"Escreva a mensagem para {destinatario}: ");
+                    string mensagem = Console.ReadLine();
+
+                    Mensagens.EnviarMensagem(remetente, destinatario, mensagem);
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Mensagem enviada com sucesso!");
+                    Console.ResetColor();
+
+                    Console.Write("Pressione Enter para enviar outra mensagem ou digite 'exit' para sair: ");
+                    string resposta = Console.ReadLine()?.Trim().ToLower();
+                    continuarEnviando = resposta != "exit";
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Write("\nAperte ENTER para regressar ao menu!");
+                    Console.ForegroundColor = ConsoleColor.White;
+
+                    if (continuarEnviando)
+                    {
+                        Console.Clear();
+                        ExibirMensagens(remetente, destinatario);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Erro: Mensagem Inválida!");
+                Console.ReadKey();
+                Console.Clear();
+            }
+
+            Console.ReadLine();
+        }
+
+        private static void ExibirMensagens(string remetente, string destinatario)
+        {
+            List<string> mensagens = Mensagens.LerMensagens(remetente, destinatario);
+
+            Console.WriteLine(mensagens.Count > 0 ? "Mensagens existentes:" : "Não há mensagens existentes.");
+
+            foreach (var mensagemExistente in mensagens)
+            {
+                Console.WriteLine(mensagemExistente);
+            }
+        }
+
+
+        public class Mensagens
+        {
+            public static void EnviarMensagem(string remetente, string destinatario, string mensagem)
+            {
+                string fileName = ObterNomeArquivo(remetente, destinatario);
+                string mensagemFormatada = $"{DateTime.Now}: {remetente} diz para {destinatario} - {mensagem}";
+                SalvarMensagem(fileName, mensagemFormatada);
+            }
+
+            public static List<string> LerMensagens(string remetente, string destinatario)
+            {
+                string fileName = ObterNomeArquivo(remetente, destinatario);
+
+                try
+                {
+                    return new List<string>(File.ReadAllLines(fileName));
+                }
+                catch (FileNotFoundException)
+                {
+                    // Se o arquivo não existir, retorna uma lista vazia
+                    return new List<string>();
+                }
+            }
+
+            private static string ObterNomeArquivo(string remetente, string destinatario)
+            {
+                if ((remetente == ("Repositor" + ((Login.UtilizadorAutenticado != null) ? " " + Login.UtilizadorAutenticado.Nome : " Desconhecido")) && destinatario == "Gerente") ||
+                (remetente == "Gerente" && destinatario == ("Repositor" + ((Login.UtilizadorAutenticado != null) ? " " + Login.UtilizadorAutenticado.Nome : " Desconhecido"))))
+                {
+                    return $"..\\..\\Mensagens\\Mensagens_Gerente_Repositor.txt";
+                }
+                else if ((remetente == ("Repositor" + ((Login.UtilizadorAutenticado != null) ? " " + Login.UtilizadorAutenticado.Nome : " Desconhecido")) && destinatario == "Caixa") ||
+                (remetente == "Caixa" && destinatario == ("Repositor" + ((Login.UtilizadorAutenticado != null) ? " " + Login.UtilizadorAutenticado.Nome : " Desconhecido"))))
+                {
+                    return $"..\\..\\Mensagens\\Mensagens_Gerente_Caixa.txt";
+                }
+                else if ((remetente == ("Repositor" + ((Login.UtilizadorAutenticado != null) ? " " + Login.UtilizadorAutenticado.Nome : " Desconhecido")) && destinatario == "Chat Geral"))
+                {
+                    return $"..\\..\\Mensagens\\Mensagens_Chat_Geral.txt";
+                }
+                else
+                {
+                    return $"..\\..\\Mensagens\\Mensagens_{remetente}_{destinatario}.txt";
+                }
+            }
+
+            public static void SalvarMensagem(string fileName, string mensagem)
+            {
+                try
+                {
+                    // Adiciona a mensagem ao arquivo de mensagens
+                    File.AppendAllText(fileName, $"{mensagem}\n");
+                }
+                catch (Exception ex)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Erro ao salvar mensagem: {ex.Message}");
+                    Console.ResetColor();
+                }
+            }
+        }
+
         public static void RegistarLivro()
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
             Console.Clear();
-            Title = "Registar Livro";
+            Console.Title = "Registar Livro";
 
             string caminhoFicheiro = "..\\..\\Livros\\Livros.txt";
 
@@ -89,18 +227,11 @@ Bem Vindo qual das opções deseja selecionar?";
                 string novaLinha;
                 bool continuarRegisto = true;
 
-                // Carregar os códigos existentes do arquivo para uma lista
-                List<int> codigosExistentes = new List<int>();
+                // Carregar as linhas do arquivo para uma lista
+                List<string> linhasExistentes = new List<string>();
                 if (File.Exists(caminhoFicheiro))
                 {
-                    string[] linhas = File.ReadAllLines(caminhoFicheiro);
-                    for (int i = 1; i < linhas.Length; i += 9) // Começar de 1 para pegar a segunda linha de cada bloco
-                    {
-                        if (int.TryParse(linhas[i], out int codigoLivro))
-                        {
-                            codigosExistentes.Add(codigoLivro);
-                        }
-                    }
+                    linhasExistentes.AddRange(File.ReadAllLines(caminhoFicheiro));
                 }
 
                 while (continuarRegisto)
@@ -122,17 +253,16 @@ Bem Vindo qual das opções deseja selecionar?";
                         continue;
                     }
 
-                    // Verificar se o código já existe
-                    if (codigosExistentes.Contains(codigo))
+                    // Verificar se o código já existe na lista de linhas
+                    if (linhasExistentes.Exists(linha => linha.StartsWith($"{codigo}|")))
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("Erro: Este código já foi utilizado. Escolha um código diferente.\n");
-                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.ForegroundColor = ConsoleColor.White;
                         Console.WriteLine("Aperte ENTER para digitar um código novo!");
                         Console.ReadKey();
                         Console.Clear();
                         continue;
-
                     }
 
                     Console.Write("\nNome do livro: ");
@@ -175,16 +305,20 @@ Bem Vindo qual das opções deseja selecionar?";
                         return;
                     }
 
-                    novaLinha = $"{Environment.NewLine}{codigo}\n{nome}\n{autor}\n{isbn}\n{genero}\n{precoFinal}\n{precoIVA}\n{quantidadeStock}\n---------------------------------------------------";
+                    // Adicionando a nova linha à lista de linhas existentes
+                    novaLinha = $"{codigo}|{nome}|{autor}|{isbn}|{genero}|{precoFinal}|{precoIVA}|{quantidadeStock}";
+                    linhasExistentes.Add(novaLinha);
 
-                    File.AppendAllText(caminhoFicheiro, novaLinha);
-                    codigosExistentes.Add(codigo); // Adicionar o novo código à lista de códigos existentes
+                    // Escrevendo as linhas atualizadas de volta para o arquivo
+
+                    File.WriteAllLines(caminhoFicheiro, linhasExistentes);
+
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("Novo livro registado com sucesso!\n");
                     Console.WriteLine("Aperte ENTER para digitar um código novo!");
+                    File.AppendAllText("..\\..\\Logs\\RegistoRepositor.txt", $"{DateTime.Now}|Código: {codigo}|Título: {nome}|Autor: {autor}|ISBN: {isbn}|Género: {genero}|Preço: {precoFinal}|IVA: {precoIVA}|Stock: {quantidadeStock}|Adicionado por: Repositor {Login.UtilizadorAutenticado.Nome}\n");
                     Console.ReadKey();
                     Console.Clear();
-                    continue;
                 }
 
                 Console.ReadKey();
@@ -197,6 +331,7 @@ Bem Vindo qual das opções deseja selecionar?";
                 Console.Clear();
             }
         }
+
         public static void AdicionarStock()
         {
             Console.Clear();
@@ -213,49 +348,46 @@ Bem Vindo qual das opções deseja selecionar?";
 
                 for (int i = 0; i < linhas.Length; i++)
                 {
-                    if (linhas[i].Trim() == codigo)
+                    string[] dadosLivro = linhas[i].Split('|');
+
+                    if (dadosLivro.Length > 0 && dadosLivro[0].Trim() == codigo)
                     {
                         livroEncontrado = true;
 
-                        // Verifica se há linhas suficientes após a linha do código
-                        if (i + 7 < linhas.Length) // Adiciona 7 para ir até a linha do stock
+                        // Verifica se há linhas suficientes após a linha do stock
+                        if (i + 7 < linhas.Length)
                         {
-                            Console.WriteLine($"\nStock atual do livro '{linhas[i + 1].Trim()}': {linhas[i + 7].Trim()}");
+                            Console.WriteLine($"\nStock atual do livro '{dadosLivro[1].Trim()}': {dadosLivro[7].Trim()}");
                             Console.Write("Quantidade a adicionar ao stock: ");
 
                             if (int.TryParse(Console.ReadLine(), out int quantidadeAdicionar))
                             {
-                                int stockAtual = int.Parse(linhas[i + 7].Trim());
+                                int stockAtual = int.Parse(dadosLivro[7].Trim());
                                 int novoStock = stockAtual + quantidadeAdicionar;
 
                                 // Atualiza a linha do stock no array
-                                linhas[i + 7] = novoStock.ToString();
-
-                                // Gera as linhas formatadas para o ficheiro
-                                string[] linhasFormatadas = linhas.Select((line, index) =>
-                                {
-                                    if (index == i + 7)
-                                        return novoStock.ToString();
-                                    return line;
-                                }).ToArray();
+                                dadosLivro[7] = novoStock.ToString();
 
                                 // Atualiza o ficheiro com as novas linhas
-                                File.WriteAllText(caminhoFicheiro, string.Join("\n", linhasFormatadas));
+                                linhas[i] = string.Join("|", dadosLivro);
+                                File.WriteAllLines(caminhoFicheiro, linhas);
 
                                 Console.ForegroundColor = ConsoleColor.Green;
-                                Console.WriteLine($"\nStock atualizado com sucesso! Novo stock: {novoStock}\n");
-                                Console.WriteLine("Aperte ENTER para voltar ao menu!");
+                                Console.WriteLine($"\nStock atualizado com sucesso. Novo stock: {novoStock}");
+                                File.AppendAllText("..\\..\\Logs\\RegistoRepositor.txt", $"{DateTime.Now}| No código {codigo}, foram adicionados {quantidadeAdicionar} unidades, dando no total {novoStock} unidades no stock. Foram adicionados pelo Repositor {Login.UtilizadorAutenticado.Nome}\n");
                             }
                             else
                             {
                                 Console.ForegroundColor = ConsoleColor.Red;
-                                Console.WriteLine("Erro: A quantidade a adicionar deve ser um número inteiro!");
+                                Console.WriteLine("Erro: A quantidade a adicionar deve ser um número inteiro.");
+                                Console.ForegroundColor = ConsoleColor.White;
                             }
                         }
                         else
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine($"Erro: Informações de stock ausentes para o livro {codigo}!");
+                            Console.WriteLine($"Erro: Informações de stock ausentes para o livro {codigo}.");
+                            Console.ForegroundColor = ConsoleColor.White;
                         }
                     }
                 }
@@ -263,7 +395,7 @@ Bem Vindo qual das opções deseja selecionar?";
                 if (!livroEncontrado)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"Erro: Livro com código {codigo} não encontrado!");
+                    Console.WriteLine($"Erro: Livro com código {codigo} não encontrado.");
                 }
 
                 Console.ReadKey();
@@ -277,12 +409,19 @@ Bem Vindo qual das opções deseja selecionar?";
             }
         }
 
+
         public static void ConsultarStock()
         {
             Console.Clear();
 
             Console.Write("Introduza o código do livro que deseja consultar stock: ");
-            string codigo = Console.ReadLine();
+            if (!int.TryParse(Console.ReadLine(), out int codigoLivro))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Erro: Por favor, insira um código de livro válido (número inteiro).");
+                Console.ReadKey();
+                return;
+            }
 
             string caminhoFicheiro = "..\\..\\Livros\\Livros.txt";
 
@@ -294,30 +433,23 @@ Bem Vindo qual das opções deseja selecionar?";
 
                 for (int i = 0; i < linhas.Length; i++)
                 {
-                    if (linhas[i].Trim() == codigo)
+                    string[] dadosLivro = linhas[i].Split('|');
+
+                    // Verifica se o código do livro corresponde ao código fornecido
+                    if (dadosLivro.Length > 0 && int.TryParse(dadosLivro[0], out int codigo) && codigo == codigoLivro)
                     {
                         livroEncontrado = true;
 
-                        // Verifica se há linhas suficientes após a linha do código
-                        if (i + 8 < linhas.Length) // Adiciona 8 para ir até a linha após a divisão
-                        {
-                            // Exibe apenas o nome e o stock do livro
-                            Console.WriteLine($"\nLivro: {linhas[i + 1].Trim()}\nStock: {linhas[i + 7].Trim()}\n");
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine("Aperte ENTER para regressar ao menu!");
-                        }
-                        else
-                        {
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine($"Erro: Informações de stock ausentes para o livro {codigo}.");
-                        }
+                        // Exibe as informações do livro, incluindo o stock
+                        Console.WriteLine($"Livro: {dadosLivro[1].Trim()}\nStock: {dadosLivro[7].Trim()}");
+                        break;
                     }
                 }
 
                 if (!livroEncontrado)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"Erro: Livro com código {codigo} não encontrado.");
+                    Console.WriteLine($"Erro: Livro com código {codigoLivro} não encontrado.");
                 }
 
                 Console.ReadKey();
