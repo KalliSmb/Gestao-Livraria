@@ -337,65 +337,65 @@ Bem Vindo qual das opções deseja selecionar?";
             Console.Clear();
 
             Console.Write("Introduza o código do livro para adicionar stock: ");
-            string codigo = Console.ReadLine();
+            if (!int.TryParse(Console.ReadLine(), out int codigoLivro))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Erro: Por favor, insira um código de livro válido (número inteiro).");
+                Console.ReadKey();
+                return;
+            }
 
             string caminhoFicheiro = "..\\..\\Livros\\Livros.txt";
 
             try
             {
                 string[] linhas = File.ReadAllLines(caminhoFicheiro);
+
                 bool livroEncontrado = false;
 
                 for (int i = 0; i < linhas.Length; i++)
                 {
                     string[] dadosLivro = linhas[i].Split('|');
 
-                    if (dadosLivro.Length > 0 && dadosLivro[0].Trim() == codigo)
+                    // Verifica se o código do livro corresponde ao código fornecido
+                    if (dadosLivro.Length > 0 && int.TryParse(dadosLivro[0], out int codigo) && codigo == codigoLivro)
                     {
                         livroEncontrado = true;
 
-                        // Verifica se há linhas suficientes após a linha do stock
-                        if (i + 7 < linhas.Length)
+                        // Exibe as informações do livro, incluindo o stock
+                        Console.WriteLine($"Livro: {dadosLivro[1].Trim()}\nStock atual: {dadosLivro[7].Trim()}");
+
+                        Console.Write("Quantidade a adicionar ao stock: ");
+                        if (int.TryParse(Console.ReadLine(), out int quantidadeAdicionar))
                         {
-                            Console.WriteLine($"\nStock atual do livro '{dadosLivro[1].Trim()}': {dadosLivro[7].Trim()}");
-                            Console.Write("Quantidade a adicionar ao stock: ");
+                            int stockAtual = int.Parse(dadosLivro[7].Trim());
+                            int novoStock = stockAtual + quantidadeAdicionar;
 
-                            if (int.TryParse(Console.ReadLine(), out int quantidadeAdicionar))
-                            {
-                                int stockAtual = int.Parse(dadosLivro[7].Trim());
-                                int novoStock = stockAtual + quantidadeAdicionar;
+                            // Atualiza a linha do stock no array
+                            dadosLivro[7] = novoStock.ToString();
 
-                                // Atualiza a linha do stock no array
-                                dadosLivro[7] = novoStock.ToString();
+                            // Atualiza o ficheiro com as novas linhas
+                            linhas[i] = string.Join("|", dadosLivro);
+                            File.WriteAllLines(caminhoFicheiro, linhas);
 
-                                // Atualiza o ficheiro com as novas linhas
-                                linhas[i] = string.Join("|", dadosLivro);
-                                File.WriteAllLines(caminhoFicheiro, linhas);
-
-                                Console.ForegroundColor = ConsoleColor.Green;
-                                Console.WriteLine($"\nStock atualizado com sucesso. Novo stock: {novoStock}");
-                                File.AppendAllText("..\\..\\Logs\\RegistoRepositor.txt", $"{DateTime.Now}| No código {codigo}, foram adicionados {quantidadeAdicionar} unidades, dando no total {novoStock} unidades no stock. Foram adicionados pelo Repositor {Login.UtilizadorAutenticado.Nome}\n");
-                            }
-                            else
-                            {
-                                Console.ForegroundColor = ConsoleColor.Red;
-                                Console.WriteLine("Erro: A quantidade a adicionar deve ser um número inteiro.");
-                                Console.ForegroundColor = ConsoleColor.White;
-                            }
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine($"\nStock atualizado com sucesso. Novo stock: {novoStock}");
+                            File.AppendAllText("..\\..\\RegistoRepositor.txt", $"{DateTime.Now}| No código {codigoLivro}, foram adicionados {quantidadeAdicionar} unidades, dando no total {novoStock} unidades no stock. Foram adicionados pelo Repositor {Login.UtilizadorAutenticado.Nome}\n");
                         }
                         else
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine($"Erro: Informações de stock ausentes para o livro {codigo}.");
-                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.WriteLine("Erro: A quantidade a adicionar deve ser um número inteiro.");
                         }
+
+                        break;
                     }
                 }
 
                 if (!livroEncontrado)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"Erro: Livro com código {codigo} não encontrado.");
+                    Console.WriteLine($"Erro: Livro com código {codigoLivro} não encontrado.");
                 }
 
                 Console.ReadKey();
