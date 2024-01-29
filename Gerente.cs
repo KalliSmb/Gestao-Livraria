@@ -60,7 +60,7 @@ Bem Vindo qual das opções deseja selecionar?";
                             break;
 
                         case 3:
-                            ModificarFuncionario();
+                            EditarFuncionario();
                             break;
 
                         case 4:
@@ -473,13 +473,13 @@ Bem Vindo qual das opções deseja selecionar?";
                 Console.ReadLine();
             }
         }
-        public static void ModificarFuncionario()
+        public static void EditarFuncionario()
         {
             Title = "Editar Funcionário";
 
             string gerente = "Gerente" + ((Login.UtilizadorAutenticado != null) ? " " + Login.UtilizadorAutenticado.Nome : " Desconhecido");
             Console.Clear();
-            Console.WriteLine("Modificar funcionário:");
+            Console.WriteLine("Editar funcionário:");
 
             string caminhoFicheiro = "..\\..\\Funcionarios\\DadosUtilizadores.txt";
             List<string> linhas = File.ReadAllLines(caminhoFicheiro).ToList();

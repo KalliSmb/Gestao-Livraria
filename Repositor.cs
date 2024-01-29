@@ -380,7 +380,7 @@ Bem Vindo qual das opções deseja selecionar?";
 
                             Console.ForegroundColor = ConsoleColor.Green;
                             Console.WriteLine($"\nStock atualizado com sucesso. Novo stock: {novoStock}");
-                            File.AppendAllText("..\\..\\RegistoRepositor.txt", $"{DateTime.Now}| No código {codigoLivro}, foram adicionados {quantidadeAdicionar} unidades, dando no total {novoStock} unidades no stock. Foram adicionados pelo Repositor {Login.UtilizadorAutenticado.Nome}\n");
+                            File.AppendAllText("..\\..\\Logs\\RegistoRepositor.txt", $"{DateTime.Now}| No código {codigoLivro}, foram adicionados {quantidadeAdicionar} unidades, dando no total {novoStock} unidades no stock. Foram adicionados pelo Repositor {Login.UtilizadorAutenticado.Nome}\n");
                         }
                         else
                         {
